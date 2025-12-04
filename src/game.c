@@ -2,10 +2,20 @@
 
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
-Player gPlayer; // joueur global
+Player gPlayer; // appel du joueur global
 
 // ******************************************
 //
+
+static bool TileContains(const Tile *t, int texIndex)
+{
+    for (int i = 0; i < t->layerCount; i++)
+    {
+        if (t->layers[i] == texIndex)
+            return true;
+    }
+    return false;
+}
 
 static void TileClear(Tile *t)
 {
@@ -36,21 +46,38 @@ static int TilePop(Tile *t)
 // ******************************************
 // Gestion du board et des entrées
 
-int maze[BOARD_ROWS][BOARD_COLS] =
-{
-    {1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,1,0,0,0,0,1},
-    {1,0,1,0,1,0,1,1,0,1},
-    {1,0,1,0,0,0,0,1,0,1},
-    {1,0,1,1,1,1,0,1,0,1},
-    {1,0,0,0,0,1,0,1,0,1},
-    {1,0,1,1,0,1,0,1,0,1},
-    {1,0,0,1,0,0,0,0,0,1},
-    {1,1,0,0,0,1,1,1,0,1},
-    {1,1,1,1,1,1,1,1,1,1},
-};
-
-
+int maze[BOARD_ROWS][BOARD_COLS] = {
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    };
 
 void GameInit(Board *board)
 {
@@ -71,25 +98,10 @@ void GameInit(Board *board)
             {
                 TilePush(t, 0);
             }
-
-            
-
-            
-
-            // couche 0 : sol
-//            int groundIndex = (x+y) % 2; // ex: desert ou mer
-//            TilePush(t, groundIndex);
-
-            // disposition des marteau sur la diagonale
-//            if (x == y)
-//            {
-//                int objectIndex = 2; // ex: pierre, arbre…
-//                TilePush(t, objectIndex);
-//            }
         }
     }
 
-    gPlayer.x = 2; // par exemple départ en (1,1)
+    gPlayer.x = 1; // par exemple départ en (1,1)
     gPlayer.y = 1;
     gPlayer.textureIndex = 3; // correspond à la texture knight
 
@@ -121,29 +133,36 @@ void GameUpdate(Board *board, float dt)
             }
         }
 
-    // Gestion des entrées clavier
+    int nextX = gPlayer.x;
+    int nextY = gPlayer.y;
+
+    // déplacement proposé
     if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT))
-    {
-        gPlayer.x += 1;
-    }
+        nextX++;
     else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
-    {
-        gPlayer.x -= 1;
-    }
+        nextX--;
     else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
-    {
-        gPlayer.y -= 1;
-    }
+        nextY--;
     else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+        nextY++;
+
+    // limites du board
+    if (nextX < 0 || nextX >= BOARD_COLS || nextY < 0 || nextY >= BOARD_ROWS)
+        return;
+
+    // récupère la tile cible
+    Tile *target = &board->tiles[nextY][nextX];
+
+    // collision mur (mur = index 1)
+    if (TileContains(target, 1))
     {
-        gPlayer.y += 1;
+        // collision → on ne bouge pas
+        return;
     }
-    
-    {
-        //TraceLog(LOG_INFO, "SPACE pressed in GameUpdate");
-    }
-    
-    
+
+    // pas de collision → on valide le déplacement
+    gPlayer.x = nextX;
+    gPlayer.y = nextY;
 }
 
 void GameDraw(const Board *board)
@@ -156,10 +175,10 @@ void GameDraw(const Board *board)
 
             // dessine le joueur au-dessus de tout
             DrawTexture(
-                gTileTextures[gPlayer.textureIndex],
-                gPlayer.x * TILE_SIZE,
+                gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
+                gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
                 gPlayer.y * TILE_SIZE,
-                WHITE);
+                WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
 
 
             // fond “vide” au cas où
@@ -185,12 +204,12 @@ void GameDraw(const Board *board)
             }
 
             // contour de la tuile (debug)
-            DrawRectangleLines(
-                x * TILE_SIZE,
-                y * TILE_SIZE,
-                TILE_SIZE,
-                TILE_SIZE,
-                DARKGRAY);
+//            DrawRectangleLines(
+//                x * TILE_SIZE,
+//                y * TILE_SIZE,
+//                TILE_SIZE,
+//                TILE_SIZE,
+//                DARKGRAY);
         }
     }
 }
