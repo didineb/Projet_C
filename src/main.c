@@ -16,8 +16,8 @@ int main(void)
     SetTargetFPS(60);
 
     // Chargement des textures
-    gTileTextures[0] = LoadTexture("assets/sand.png");
-    gTileTextures[1] = LoadTexture("assets/water.png");
+    gTileTextures[0] = LoadTexture("assets/sol.png");
+    gTileTextures[1] = LoadTexture("assets/wall.png");
     gTileTextures[2] = LoadTexture("assets/knight.png");
     gTileTextures[3] = LoadTexture("assets/knight.png");
     gTileTextureCount = 4;
