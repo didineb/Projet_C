@@ -5,7 +5,9 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 
 // ******************************************
-//
+// ******************************************
+
+int visionRadius = 5; // rayon de vision du joueur
 
 static bool TileContains(const Tile *t, int texIndex) //fonction bool pour vérifier si une texture précise est présente dans une tuile
 {
@@ -86,8 +88,6 @@ void GameInit(Board *board)
     {
         for (int x = 0; x < BOARD_COLS; x++)
         {
-
-            
             Tile *t = &board->tiles[y][x];
             TileClear(t);
 
@@ -110,34 +110,11 @@ void GameInit(Board *board)
 
 void GameUpdate(Board *board, float dt)
 {
-    Vector2 m = GetMousePosition();
-    
-    // Gestion des entrées souris sur les tuiles
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    {
-        int tileX = (int)(m.x) / TILE_SIZE;
-        int tileY = (int)(m.y) / TILE_SIZE;
-        
-        TraceLog(LOG_INFO,
-            "MOUSE DOWN at x=%.1f y=%.1f corresponding tile (%d, %d)",
-            m.x, m.y, tileX, tileY);
-            
-            Tile *t = &board->tiles[tileY][tileX];
-            if (t->layerCount > 1)
-            {
-                TilePop(t);
-            }
-            else
-            {
-                int objectIndex = 2;
-                TilePush(t, objectIndex);
-            }
-        }
 
     int nextX = gPlayer.x;  //va récupérer la position actuelle du joueur en x
     int nextY = gPlayer.y;
 
-    // déplacement proposé
+    // système de déplacement au clavier
     if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT))
         nextX++;
     else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
@@ -168,19 +145,12 @@ void GameUpdate(Board *board, float dt)
 
 void GameDraw(const Board *board)
 {
+
     for (int y = 0; y < BOARD_ROWS; y++)
     {
         for (int x = 0; x < BOARD_COLS; x++)
         {
             const Tile *t = &board->tiles[y][x];
-
-            // dessine le joueur au-dessus de tout
-            DrawTexture(
-                gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
-                gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
-                gPlayer.y * TILE_SIZE,
-                WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
-
 
             // fond “vide” au cas où
             DrawRectangle(
@@ -203,14 +173,14 @@ void GameDraw(const Board *board)
                         WHITE);
                 }
             }
-
-            // contour de la tuile (debug)
-//            DrawRectangleLines(
-//                x * TILE_SIZE,
-//                y * TILE_SIZE,
-//                TILE_SIZE,
-//                TILE_SIZE,
-//                DARKGRAY);
         }
     }
+
+    // dessine le joueur au-dessus de tout
+    DrawTexture(
+        gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
+        gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
+        gPlayer.y * TILE_SIZE,
+        WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
+
 }
