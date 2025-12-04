@@ -19,6 +19,8 @@ typedef struct
     Tile tiles[BOARD_ROWS][BOARD_COLS];
 } Board;
 
+
+
 void GameInit(Board *board);
 void GameUpdate(Board *board, float dt);
 void GameDraw(const Board *board);

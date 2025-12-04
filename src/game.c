@@ -50,12 +50,17 @@ int maze[BOARD_ROWS][BOARD_COLS] =
     {1,1,1,1,1,1,1,1,1,1},
 };
 
+
+
 void GameInit(Board *board)
 {
+    
     for (int y = 0; y < BOARD_ROWS; y++)
     {
         for (int x = 0; x < BOARD_COLS; x++)
         {
+
+            
             Tile *t = &board->tiles[y][x];
             TileClear(t);
 
@@ -67,6 +72,10 @@ void GameInit(Board *board)
             {
                 TilePush(t, 0);
             }
+            board->player.x = 1 * TILE_SIZE;
+            board->player.y = 1 * TILE_SIZE;
+            board->player.speed = 150;
+
             
 
             
@@ -116,6 +125,8 @@ void GameUpdate(Board *board, float dt)
     {
         TraceLog(LOG_INFO, "SPACE pressed in GameUpdate");
     }
+    
+    
 }
 
 void GameDraw(const Board *board)
