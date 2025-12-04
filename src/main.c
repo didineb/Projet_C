@@ -19,7 +19,8 @@ int main(void)
     gTileTextures[0] = LoadTexture("assets/sand.png");
     gTileTextures[1] = LoadTexture("assets/water.png");
     gTileTextures[2] = LoadTexture("assets/tool.png");
-    gTileTextureCount = 3;
+    gTileTextures[3] = LoadTexture("assets/knight.png");
+    gTileTextureCount = 4;
     
     Board board = {0};
     GameInit(&board);
