@@ -2,6 +2,7 @@
 
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
+Player gPlayer; // joueur global
 
 // ******************************************
 //
@@ -51,6 +52,7 @@ int maze[BOARD_ROWS][BOARD_COLS] =
 
 void GameInit(Board *board)
 {
+
     for (int y = 0; y < BOARD_ROWS; y++)
     {
         for (int x = 0; x < BOARD_COLS; x++)
@@ -65,7 +67,6 @@ void GameInit(Board *board)
             else if (maze[y][x] == 0)
             {
                 TilePush(t, 0);
-                TilePush(t, 3);
             }
             
 
@@ -83,6 +84,11 @@ void GameInit(Board *board)
 //            }
         }
     }
+
+    gPlayer.x = 2; // par exemple départ en (1,1)
+    gPlayer.y = 1;
+    gPlayer.textureIndex = 3; // correspond à la texture knight
+
 }
 
 void GameUpdate(Board *board, float dt)
@@ -112,9 +118,25 @@ void GameUpdate(Board *board, float dt)
         }
 
     // Gestion des entrées clavier
-    if (IsKeyPressed(KEY_SPACE))
+    if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT))
     {
-        TraceLog(LOG_INFO, "SPACE pressed in GameUpdate");
+        gPlayer.x += 1;
+    }
+    else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
+    {
+        gPlayer.x -= 1;
+    }
+    else if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+    {
+        gPlayer.y -= 1;
+    }
+    else if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+    {
+        gPlayer.y += 1;
+    }
+    
+    {
+        //TraceLog(LOG_INFO, "SPACE pressed in GameUpdate");
     }
 }
 
@@ -125,6 +147,14 @@ void GameDraw(const Board *board)
         for (int x = 0; x < BOARD_COLS; x++)
         {
             const Tile *t = &board->tiles[y][x];
+
+            // dessine le joueur au-dessus de tout
+            DrawTexture(
+                gTileTextures[gPlayer.textureIndex],
+                gPlayer.x * TILE_SIZE,
+                gPlayer.y * TILE_SIZE,
+                WHITE);
+
 
             // fond “vide” au cas où
             DrawRectangle(

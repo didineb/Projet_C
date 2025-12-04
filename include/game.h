@@ -19,6 +19,15 @@ typedef struct
     Tile tiles[BOARD_ROWS][BOARD_COLS];
 } Board;
 
+
+typedef struct {
+    int x, y;           // position sur le board
+    int textureIndex;   // index de la texture dans gTileTextures
+} Player;
+
+extern Player gPlayer;
+
+
 void GameInit(Board *board);
 void GameUpdate(Board *board, float dt);
 void GameDraw(const Board *board);
