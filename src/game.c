@@ -36,6 +36,20 @@ static int TilePop(Tile *t)
 // ******************************************
 // Gestion du board et des entrées
 
+int maze[BOARD_ROWS][BOARD_COLS] =
+{
+    {1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,1,0,0,0,0,1},
+    {1,0,1,0,1,0,1,1,0,1},
+    {1,0,1,0,0,0,0,1,0,1},
+    {1,0,1,1,1,1,0,1,0,1},
+    {1,0,0,0,0,1,0,1,0,1},
+    {1,0,1,1,0,1,0,1,0,1},
+    {1,0,0,1,0,0,0,0,0,1},
+    {1,1,0,0,0,1,1,1,0,1},
+    {1,1,1,1,1,1,1,1,1,1},
+};
+
 void GameInit(Board *board)
 {
     for (int y = 0; y < BOARD_ROWS; y++)
@@ -45,16 +59,28 @@ void GameInit(Board *board)
             Tile *t = &board->tiles[y][x];
             TileClear(t);
 
+            if (maze[x][y] == 1)
+            {
+                TilePush(t, 1);
+            }
+            else if (maze[x][y] == 0)
+            {
+                TilePush(t, 0);
+            }
+            
+
+            
+
             // couche 0 : sol
-            int groundIndex = (x+y) % 2; // ex: desert ou mer
-            TilePush(t, groundIndex);
+//            int groundIndex = (x+y) % 2; // ex: desert ou mer
+//            TilePush(t, groundIndex);
 
             // disposition des marteau sur la diagonale
-            if (x == y)
-            {
-                int objectIndex = 2; // ex: pierre, arbre…
-                TilePush(t, objectIndex);
-            }
+//            if (x == y)
+//            {
+//                int objectIndex = 2; // ex: pierre, arbre…
+//                TilePush(t, objectIndex);
+//            }
         }
     }
 }
