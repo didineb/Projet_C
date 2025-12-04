@@ -3,7 +3,7 @@
 
 
 // Gestionnaire de texture
-Texture2D gTileTextures[3];
+Texture2D gTileTextures[4];
 int gTileTextureCount = 0;
 
 

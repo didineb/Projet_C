@@ -4,8 +4,8 @@
 #include "raylib.h"
 
 #define TILE_SIZE 32
-#define BOARD_COLS 20
-#define BOARD_ROWS 20
+#define BOARD_COLS 30
+#define BOARD_ROWS 30
 #define MAX_LAYERS 4
 
 typedef struct
