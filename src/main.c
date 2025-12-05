@@ -43,6 +43,7 @@ int main(void)
         DrawText(TextFormat("Time : %.2f", time), 170, 10, 20, GREEN);
 
         DrawText(TextFormat("PV : %d", gPlayer.pv), 10, 40, 20, RED);
+        DrawText(TextFormat("Victoires : %d", gTrophe.victoire), 20, 80, 40, YELLOW);
 
         EndDrawing();
     }

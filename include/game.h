@@ -34,6 +34,7 @@ typedef struct{
 typedef struct{
     int x, y;
     int textureIndex;
+    int victoire;
 } Trophe;
 
 extern Player gPlayer;  // joueur global
