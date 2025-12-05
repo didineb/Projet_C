@@ -1,4 +1,6 @@
 #include "game.h"
+#include "stdlib.h"
+#include "math.h"
 
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
@@ -112,6 +114,8 @@ void GameInit(Board *board)
     gEnemy.y = 28;
     gEnemy.textureIndex = 3;
 
+    TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3);
+
 }
 
 void GameUpdate(Board *board, float dt)
@@ -126,26 +130,27 @@ void GameUpdate(Board *board, float dt)
     int nextX = gPlayer.x;  //va récupérer la position actuelle du joueur en x
     int nextY = gPlayer.y;
 
+
    // On agit seulement si le délai est écoulé
-if (now - lastMoveTime >= moveDelay)
-{
-    if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
-        nextX++;
-        lastMoveTime = now;
+    if (now - lastMoveTime >= moveDelay)
+    {
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
+            nextX++;
+            lastMoveTime = now;
+        }
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
+            nextX--;
+            lastMoveTime = now;
+        }
+        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
+            nextY--;
+            lastMoveTime = now;
+        }
+        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
+            nextY++;
+            lastMoveTime = now;
+        }
     }
-    else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
-        nextX--;
-        lastMoveTime = now;
-    }
-    else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
-        nextY--;
-        lastMoveTime = now;
-    }
-    else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
-        nextY++;
-        lastMoveTime = now;
-    }
-}
 
 
     // limites du board pour ne pas sortir de l'écran
@@ -210,12 +215,6 @@ void GameDraw(const Board *board)
         gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
         gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
         gPlayer.y * TILE_SIZE,
-        WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
-
-    DrawTexture(
-        gTileTextures[gEnemy.textureIndex], //récupère la texture du joueur
-        gEnemy.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
-        gEnemy.y * TILE_SIZE,
         WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
 
 }
