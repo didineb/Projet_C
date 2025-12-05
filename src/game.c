@@ -127,7 +127,7 @@ void GameUpdate(Board *board, float dt)
 
     if (gameOver)
     {
-        // Après 0.9s, réinitialiser le jeu
+        // Après 2.5s, réinitialiser le jeu
         if (GetTime() - gameOverTime >= 2.5f) 
         {
             GameInit(board);
@@ -173,7 +173,7 @@ void GameUpdate(Board *board, float dt)
         }
         return;
     }
-    
+
     if (TileContains(target, 5)){
         gTrophe.victoire += 1;
         gPlayer.y = 1;
@@ -234,6 +234,6 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 250, 410, 80, RED);
+        DrawText("GAME OVER", 400, 350, 80, RED);
     }
 }

@@ -24,7 +24,7 @@ typedef struct
 typedef struct {
     int x, y; // position sur le board
     int pv;           
-    int textureIndex;   // index de la texture dans gTileTextures
+    float attackStartTime;
 } Player;
 
 typedef struct{
@@ -45,5 +45,6 @@ extern Trophe gTrophe;
 void GameInit(Board *board); // initialise le board
 void GameUpdate(Board *board, float dt); // mise à jour du jeu
 void GameDraw(const Board *board); // affichage du jeu
+
 
 #endif

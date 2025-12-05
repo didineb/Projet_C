@@ -4,7 +4,6 @@
 
 // Gestionnaire de texture
 Texture2D gTileTextures[6];
-Texture2D gTileTextures[6];
 int gTileTextureCount = 0;
 
 
@@ -14,6 +13,8 @@ int main(void)
     const int screenHeight = BOARD_ROWS * TILE_SIZE;
 
     InitWindow(screenWidth, screenHeight, "Knight Maze - PADARMA Edition");
+
+    InitAudioDevice();
 
     SetTargetFPS(60);
 
@@ -25,15 +26,26 @@ int main(void)
     gTileTextures[4] = LoadTexture("assets/attack.png");
     gTileTextures[5] = LoadTexture("assets/trophy.png");
     gTileTextureCount = 6;
+
+    
+
     
     Board board = {0}; 
     GameInit(&board);
 
+    Music music = LoadMusicStream("assets/Panjabi.ogg");
+
+    PlayMusicStream(music);
+
     while (!WindowShouldClose())
     {
+        
+        UpdateMusicStream(music);
+
         float dt = GetFrameTime(); 
 
-        GameUpdate(&board, dt); 
+        GameUpdate(&board, dt);
+
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
@@ -56,6 +68,8 @@ int main(void)
         UnloadTexture(gTileTextures[i]);
     }
 
+    UnloadMusicStream(music);
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }
