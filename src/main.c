@@ -40,6 +40,8 @@ int main(void)
         double time = GetTime();
         DrawText(TextFormat("Time : %.2f", time), 170, 10, 20, GREEN);
 
+        DrawText(TextFormat("PV : %d", gPlayer.pv), 10, 40, 20, RED);
+
         EndDrawing();
     }
 

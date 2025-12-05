@@ -105,6 +105,7 @@ void GameInit(Board *board)
 
     gPlayer.x = 1; // départ en (1,1)
     gPlayer.y = 1;
+    gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
     gEnemy.x = 28;
@@ -161,8 +162,9 @@ if (now - lastMoveTime >= moveDelay)
         return;
     }
 
-    if (TileContains(target, 1))
+    if (TileContains(target, 3))
     {
+        gPlayer.pv -= 1; // le joueur perd 1 point de vie
         return;
     }
 
