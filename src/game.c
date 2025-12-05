@@ -169,7 +169,17 @@ void GameUpdate(Board *board, float dt)
 
     if (TileContains(target, 3))
     {
+        
         gPlayer.pv -= 1; // le joueur perd 1 point de vie
+
+        if (gPlayer.pv == 0)
+        {
+            // réinitialisation du jeu
+            GameInit(board);
+            return;
+        }
+        
+
         return;
     }
 
