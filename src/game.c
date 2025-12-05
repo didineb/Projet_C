@@ -7,6 +7,7 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
+
 // ******************************************
 // ******************************************
 
@@ -100,8 +101,6 @@ void GameInit(Board *board)
     gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    gEnemy.x = 3;
-    gEnemy.y = 1;
     gEnemy.x = 3;
     gEnemy.y = 1;
     gEnemy.textureIndex = 3;

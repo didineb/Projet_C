@@ -22,6 +22,7 @@ int main(void)
     gTileTextures[1] = LoadTexture("assets/wall.png");
     gTileTextures[2] = LoadTexture("assets/knight.png");
     gTileTextures[3] = LoadTexture("assets/skeleton.png");
+    gTileTextures[4] = LoadTexture("assets/attack.png");
     gTileTextures[5] = LoadTexture("assets/trophy.png");
     gTileTextureCount = 6;
     
