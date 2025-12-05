@@ -174,6 +174,7 @@ void GameUpdate(Board *board, float dt)
         }
         return;
     }
+    
     if (TileContains(target, 5)){
         gTrophe.victoire += 1;
         gPlayer.y = 1;
@@ -234,6 +235,6 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 80, 80, 40, RED);
+        DrawText("GAME OVER", 250, 410, 80, RED);
     }
 }
