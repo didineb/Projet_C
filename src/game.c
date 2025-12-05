@@ -3,6 +3,7 @@
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
+Enemy gEnemy; // appel de l'ennemi global
 
 // ******************************************
 // ******************************************
@@ -104,35 +105,16 @@ void GameInit(Board *board)
 
     gPlayer.x = 1; // départ en (1,1)
     gPlayer.y = 1;
-    gPlayer.textureIndex = 3; // correspond à la texture knight
+    gPlayer.textureIndex = 2; // correspond à la texture knight
+
+    gEnemy.x = 28;
+    gEnemy.y = 28;
+    gEnemy.textureIndex = 3;
 
 }
 
 void GameUpdate(Board *board, float dt)
 {
-    Vector2 m = GetMousePosition();
-    
-    // Gestion des entrées souris sur les tuiles
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    {
-        int tileX = (int)(m.x) / TILE_SIZE; // calcule la colonne de la tuile cliquée
-        int tileY = (int)(m.y) / TILE_SIZE; // calcule la ligne de la tuile cliquée
-        
-        TraceLog(LOG_INFO,
-            "MOUSE DOWN at x=%.1f y=%.1f corresponding tile (%d, %d)",
-            m.x, m.y, tileX, tileY);
-            
-            Tile *t = &board->tiles[tileY][tileX]; //récupère la tuile cliquée
-            if (t->layerCount > 1)
-            {
-                TilePop(t);
-            }
-            else
-            {
-                int objectIndex = 2;
-                TilePush(t, objectIndex);
-            }
-        }
 
     int nextX = gPlayer.x;  //va récupérer la position actuelle du joueur en x
     int nextY = gPlayer.y;
@@ -158,6 +140,11 @@ void GameUpdate(Board *board, float dt)
     if (TileContains(target, 1))
     {
         // collision → on ne bouge pas
+        return;
+    }
+
+    if (TileContains(target, 1))
+    {
         return;
     }
 
@@ -211,6 +198,12 @@ void GameDraw(const Board *board)
         gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
         gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
         gPlayer.y * TILE_SIZE,
+        WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
+
+    DrawTexture(
+        gTileTextures[gEnemy.textureIndex], //récupère la texture du joueur
+        gEnemy.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
+        gEnemy.y * TILE_SIZE,
         WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
 
 }

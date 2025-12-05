@@ -12,14 +12,14 @@ int main(void)
     const int screenWidth = BOARD_COLS * TILE_SIZE;
     const int screenHeight = BOARD_ROWS * TILE_SIZE;
 
-    InitWindow(screenWidth, screenHeight, "Raylib Board Game - macOS M1");
+    InitWindow(screenWidth, screenHeight, "Knight Maze - PADARMA Edition");
     SetTargetFPS(60);
 
     // Chargement des textures
     gTileTextures[0] = LoadTexture("assets/sol.png");
     gTileTextures[1] = LoadTexture("assets/wall.png");
     gTileTextures[2] = LoadTexture("assets/knight.png");
-    gTileTextures[3] = LoadTexture("assets/knight.png");
+    gTileTextures[3] = LoadTexture("assets/skeleton.png");
     gTileTextureCount = 4;
     
     Board board = {0}; 

@@ -25,8 +25,14 @@ typedef struct {
     int textureIndex;   // index de la texture dans gTileTextures
 } Player;
 
-extern Player gPlayer;  // joueur global
+typedef struct{
+    int x, y;
+    int textureIndex;
+} Enemy;
 
+
+extern Player gPlayer;  // joueur global
+extern Enemy gEnemy;    // ennemi global
 
 void GameInit(Board *board); // initialise le board
 void GameUpdate(Board *board, float dt); // mise à jour du jeu
