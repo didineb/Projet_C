@@ -13,6 +13,7 @@ int main(void)
     const int screenHeight = BOARD_ROWS * TILE_SIZE;
 
     InitWindow(screenWidth, screenHeight, "Knight Maze - PADARMA Edition");
+
     SetTargetFPS(60);
 
     // Chargement des textures
