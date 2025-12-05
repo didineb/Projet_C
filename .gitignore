@@ -1,3 +1,5 @@
 build/*
 game.exe
 game
+.vscode/*
+Makefile
