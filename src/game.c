@@ -110,29 +110,6 @@ void GameInit(Board *board)
 
 void GameUpdate(Board *board, float dt)
 {
-    Vector2 m = GetMousePosition();
-    
-    // Gestion des entrées souris sur les tuiles
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-    {
-        int tileX = (int)(m.x) / TILE_SIZE; // calcule la colonne de la tuile cliquée
-        int tileY = (int)(m.y) / TILE_SIZE; // calcule la ligne de la tuile cliquée
-        
-        TraceLog(LOG_INFO,
-            "MOUSE DOWN at x=%.1f y=%.1f corresponding tile (%d, %d)",
-            m.x, m.y, tileX, tileY);
-            
-            Tile *t = &board->tiles[tileY][tileX]; //récupère la tuile cliquée
-            if (t->layerCount > 1)
-            {
-                TilePop(t);
-            }
-            else
-            {
-                int objectIndex = 2;
-                TilePush(t, objectIndex);
-            }
-        }
 
     int nextX = gPlayer.x;  //va récupérer la position actuelle du joueur en x
     int nextY = gPlayer.y;
@@ -173,14 +150,6 @@ void GameDraw(const Board *board)
         for (int x = 0; x < BOARD_COLS; x++) //parcours toutes les colonnes
         {
             const Tile *t = &board->tiles[y][x]; //récupère la tuile actuelle
-
-            // dessine le joueur au-dessus de tout
-            DrawTexture(
-                gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
-                gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
-                gPlayer.y * TILE_SIZE,
-                WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
-
 
             // fond “vide” au cas où
             DrawRectangle(
