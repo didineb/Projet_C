@@ -4,9 +4,10 @@
 #include "raylib.h"
 
 #define TILE_SIZE 32
-#define BOARD_COLS 30
-#define BOARD_ROWS 30
-#define MAX_LAYERS 4
+#define BOARD_COLS 34
+#define BOARD_ROWS 22
+#define MAX_LAYERS 6
+#define visionRadius 1  // rayon de vision du joueur
 
 typedef struct
 {

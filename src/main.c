@@ -3,7 +3,7 @@
 
 
 // Gestionnaire de texture
-Texture2D gTileTextures[4];
+Texture2D gTileTextures[6];
 int gTileTextureCount = 0;
 
 
@@ -20,7 +20,8 @@ int main(void)
     gTileTextures[1] = LoadTexture("assets/wall.png");
     gTileTextures[2] = LoadTexture("assets/knight.png");
     gTileTextures[3] = LoadTexture("assets/skeleton.png");
-    gTileTextureCount = 4;
+    gTileTextures[4] = LoadTexture("assets/attack.png");
+    gTileTextureCount = 6;
     
     Board board = {0}; 
     GameInit(&board);
