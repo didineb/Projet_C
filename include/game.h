@@ -21,7 +21,8 @@ typedef struct
 
 
 typedef struct {
-    int x, y;           // position sur le board
+    int x, y; // position sur le board
+    int pv;           
     int textureIndex;   // index de la texture dans gTileTextures
 } Player;
 
