@@ -5,7 +5,7 @@ extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
-
+Trophe gTrophe;
 // ******************************************
 // ******************************************
 
@@ -113,6 +113,11 @@ void GameInit(Board *board)
     gEnemy.y = 28;
     gEnemy.textureIndex = 3;
 
+    gTrophe.x = 29;
+    gTrophe.y = 16;
+    gTrophe.textureIndex = 5;
+
+    TilePush(&board->tiles[gTrophe.y][gTrophe.x], 5);
     TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3);
 
 }
@@ -179,6 +184,10 @@ void GameUpdate(Board *board, float dt)
         }
         
 
+        return;
+    }
+    if (TileContains(target, 5)){
+        GameInit(board);
         return;
     }
 
