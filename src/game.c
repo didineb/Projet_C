@@ -5,7 +5,9 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 
 // ******************************************
-//
+// ******************************************
+
+int visionRadius = 5; // rayon de vision du joueur
 
 static bool TileContains(const Tile *t, int texIndex) //fonction bool pour vérifier si une texture précise est présente dans une tuile
 {
@@ -86,8 +88,6 @@ void GameInit(Board *board)
     {
         for (int x = 0; x < BOARD_COLS; x++)
         {
-
-            
             Tile *t = &board->tiles[y][x];
             TileClear(t);
 
@@ -137,7 +137,7 @@ void GameUpdate(Board *board, float dt)
     int nextX = gPlayer.x;  //va récupérer la position actuelle du joueur en x
     int nextY = gPlayer.y;
 
-    // déplacement proposé
+    // système de déplacement au clavier
     if (IsKeyPressed(KEY_D) || IsKeyPressed(KEY_RIGHT))
         nextX++; //si la touche D ou flèche droite est pressée on ajoute la position x
     else if (IsKeyPressed(KEY_A) || IsKeyPressed(KEY_LEFT))
@@ -203,14 +203,14 @@ void GameDraw(const Board *board)
                         WHITE);
                 }
             }
-
-            // contour de la tuile (debug)
-//            DrawRectangleLines(
-//                x * TILE_SIZE,
-//                y * TILE_SIZE,
-//                TILE_SIZE,
-//                TILE_SIZE,
-//                DARKGRAY);
         }
     }
+
+    // dessine le joueur au-dessus de tout
+    DrawTexture(
+        gTileTextures[gPlayer.textureIndex], //récupère la texture du joueur
+        gPlayer.x * TILE_SIZE, // position x en cases car multiplié par la taille d'une tuile
+        gPlayer.y * TILE_SIZE,
+        WHITE); //tint = filtre de couleur | WHITE signifie : dessiner l’image normalement.
+
 }
