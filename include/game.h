@@ -24,7 +24,7 @@ typedef struct
 typedef struct {
     int x, y; // position sur le board
     int pv;           
-    float attackStartTime;
+    int textureIndex;
 } Player;
 
 typedef struct{
