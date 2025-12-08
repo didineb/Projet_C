@@ -7,7 +7,7 @@
 #define BOARD_COLS 34
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
-#define visionRadius 1 // rayon de vision du joueur
+int visionRadius = 1; // rayon de vision du joueur
 
 typedef struct
 {
