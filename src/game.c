@@ -13,8 +13,13 @@ Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
 Sound gVictoryMusic; // musique de victoire
+Sound gFlash; // son power up vitesse
+Sound gVision; // son power up vision
+Sound gHeart; // son power up coeur
 
 PowerUp gPowerUp; // powerup global
+int visionRadius = 1; // rayon de vision du joueur
+
 
 // ******************************************
 // ******************************************
@@ -156,7 +161,9 @@ void GameInit(Board *board)
         
     }
     
-    
+    gPlayer.pv = 3;
+    visionRadius = 1;   // reset vision au début d'une partie
+
 
 }
 
@@ -255,6 +262,9 @@ void GameUpdate(Board *board, float dt)
             GameInit(board);
             gPlayer.pv = 3;
             gameOver = false;
+            visionRadius = 1;
+            float moveDelay = 0.15f;
+
         }
         return;
     }
@@ -330,17 +340,20 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,6))
     {
-        moveDelay-+0.09f;   
+        moveDelay-+0.09f;
+        PlaySound(gFlash);
         TilePop(target);
     }
     if (TileContains(target,7))
     {
         visionRadius += 2;
+        PlaySound(gVision);
         TilePop(target);
     }
     if (TileContains(target,8))
     {
         gPlayer.pv+=1;
+        PlaySound(gHeart);
         TilePop(target);
     }
     
