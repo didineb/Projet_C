@@ -12,6 +12,7 @@ Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
 
+PowerUp gPowerUp; // powerup global
 
 // ******************************************
 // ******************************************
@@ -127,6 +128,30 @@ void GameInit(Board *board)
 
     gEnemy.lastMoveTime = 0;
     gEnemy.moveDelay = 0.4; // ennemi bouge toutes les 0.4 secondes (400 ms)
+
+
+    //spawn aléatoire de power-ups
+    int xrand, yrand;
+
+    for (int i = 0; i < 4; i++)
+    {
+        do {
+            xrand = rand() % BOARD_COLS; // colonne aléatoire
+            yrand = rand() % BOARD_ROWS; // ligne aléatoire
+        } while (
+            TileContains(&board->tiles[yrand][xrand], 1) || // mur
+            TileContains(&board->tiles[yrand][xrand], 2) || // joueur
+            TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
+            TileContains(&board->tiles[yrand][xrand], 5) || // trophée
+            xrand == 1 && yrand == 1                        // position de départ du joueur
+        );
+
+        gPowerUp.textureIndex = 6; // power-up
+        TilePush(&board->tiles[yrand][xrand], 6); // ajoute le power-up
+        
+    }
+    
+    
 
 }
 
@@ -353,6 +378,8 @@ void GameDraw(const Board *board)
     {
         DrawText("GAME OVER", 400, 350, 80, RED);
     }
+
+    // Affiche Victoire si nécessaire
     static bool Victory = false; // même flag que dans GameUpdate
     if (gTrophe.victoire==1 || Victory)
     {
