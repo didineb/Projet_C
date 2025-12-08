@@ -34,6 +34,8 @@ int main(void)
     GameInit(&board);
 
     Music music = LoadMusicStream("assets/Panjabi.ogg");
+    gDeathSound = LoadSound("assets/death_sound.ogg");
+    gHitSound = LoadSound("assets/hit_sound.ogg");
 
     PlayMusicStream(music);
 

@@ -7,6 +7,8 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
+Sound gDeathSound; // son de mort
+Sound gHitSound; // son de dommage
 
 // ******************************************
 // ******************************************
@@ -105,8 +107,8 @@ void GameInit(Board *board)
     gEnemy.y = 1;
     gEnemy.textureIndex = 3;
 
-    gTrophe.x = 29;
-    gTrophe.y = 16;
+    gTrophe.x = 32;
+    gTrophe.y = 21;
     gTrophe.victoire = 0;
     gTrophe.textureIndex = 5;
 
@@ -178,95 +180,83 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 
 void GameUpdate(Board *board, float dt)
 {
-    // Durée minimale entre deux mouvements (en secondes)
     float moveDelay = 0.15f;
     static float lastMoveTime = 0.0f;
 
-    // Gestion du Game Over
     static bool gameOver = false;
     static float gameOverTime = 0.0f;
 
+    static float HitTime = 0.0f;
+
     if (gameOver)
     {
-        // Après 2.5s, réinitialiser le jeu
-        if (GetTime() - gameOverTime >= 2.5f) 
+        if (GetTime() - gameOverTime >= 2.5f)
         {
             GameInit(board);
             gPlayer.pv = 3;
             gameOver = false;
         }
-        return; // pendant le Game Over, pas de déplacement
-    }
-
-    float now = GetTime();   // temps actuel
-    int nextX = gPlayer.x;
-    int nextY = gPlayer.y;
-
-    // Déplacement avec délai
-    if (now - lastMoveTime >= moveDelay)
-    {
-        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now;}
-        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now;}
-        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now;}
-        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now;}
+        return;
     }
 
     double now = GetTime();
 
+    // --- ✔ ENNEMI SE DÉPLACE TOUJOURS ---
     if (now - gEnemy.lastMoveTime >= gEnemy.moveDelay)
     {
         UpdateEnemy(board, &gEnemy, &gPlayer);
         gEnemy.lastMoveTime = now;
     }
+    // -------------------------------------
 
 
-    // Récupère la tuile cible
+    // --- LOGIQUE DU JOUEUR ---
+    int nextX = gPlayer.x;
+    int nextY = gPlayer.y;
+
+    if (now - lastMoveTime >= moveDelay)
+    {
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; }
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; }
+        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; }
+        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
+    }
+
+    // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
 
-    // Limites du board
-    if (nextX < 0 || nextX >= BOARD_COLS || nextY < 0 || nextY >= BOARD_ROWS) return;
-
-    // appel de la fonction de vérification des tuiles et si la tuile cible est égale à 1 c'est alors un mur
     if (TileContains(target, 1))
-    {
-        // collision → on ne bouge pas
         return;
-    }
 
     if (TileContains(target, 3))
     {
-        gPlayer.pv--;
-        if (gPlayer.pv == 0)
+        if (GetTime() - HitTime >= 2.5f)
         {
-            gameOver = true;
-            gameOverTime = GetTime(); // démarre le délai avant réinitialisation
+            gPlayer.pv--;
+            PlaySound(gHitSound);
+            HitTime = GetTime();
         }
-        return;
-    }
-
-    // Si l'ennemi atteint le joueur
-    if (gEnemy.x == gPlayer.x && gEnemy.y == gPlayer.y)
-    {
-        gPlayer.pv--;
         if (gPlayer.pv <= 0)
         {
+            PlaySound(gDeathSound);
             gameOver = true;
             gameOverTime = GetTime();
         }
-    }
-
-
-    if (TileContains(target, 5)){
-        gTrophe.victoire += 1;
-        gPlayer.y = 1;
-        gPlayer.x = 1;
         return;
     }
 
-    // Déplacement validé
+    if (TileContains(target, 5))
+    {
+        gTrophe.victoire += 1;
+        gPlayer.x = 1;
+        gPlayer.y = 1;
+        return;
+    }
+
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 }
+
 
 void GameDraw(const Board *board)
 {
