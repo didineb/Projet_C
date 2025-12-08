@@ -42,6 +42,7 @@ extern Player gPlayer;  // joueur global
 extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
 extern Sound gDeathSound; // son de mort
+extern Sound gHitSound; // son de dommage
 
 
 void GameInit(Board *board); // initialise le board

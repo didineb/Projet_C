@@ -35,6 +35,7 @@ int main(void)
 
     Music music = LoadMusicStream("assets/Panjabi.ogg");
     gDeathSound = LoadSound("assets/death_sound.ogg");
+    gHitSound = LoadSound("assets/hit_sound.ogg");
 
     PlayMusicStream(music);
 

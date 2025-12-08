@@ -8,6 +8,7 @@ Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
 Sound gDeathSound; // son de mort
+Sound gHitSound; // son de dommage
 
 // ******************************************
 // ******************************************
@@ -128,6 +129,9 @@ void GameUpdate(Board *board, float dt)
     static bool gameOver = false;
     static float gameOverTime = 0.0f;
 
+    // Gestion des dommages
+    static float HitTime = 0.0f;
+
     if (gameOver)
     {
         // Après 2.5s, réinitialiser le jeu
@@ -168,7 +172,12 @@ void GameUpdate(Board *board, float dt)
 
     if (TileContains(target, 3))
     {
-        gPlayer.pv--;
+        if (GetTime() - HitTime >= 2.5f)
+        {
+            gPlayer.pv--;
+            PlaySound(gHitSound);
+            HitTime = GetTime();
+        }
         if (gPlayer.pv == 0)
         {
             PlaySound(gDeathSound);
