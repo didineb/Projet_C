@@ -13,6 +13,10 @@ Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
 Sound gVictoryMusic; // musique de victoire
+Sound gFlash; // son power up vitesse
+Sound gVision; // son power up vision
+Sound gHeart; // son power up coeur
+
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 
@@ -160,7 +164,7 @@ void GameInit(Board *board)
         TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
         
     }
-    
+
     // Spawn trophée dans les bordures uniquement sur les cases = 0
     int tx, ty;
 
@@ -171,22 +175,22 @@ void GameInit(Board *board)
         switch (side) {
             case 0:  // bord haut
                 ty = 0;
-                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                tx = rand() % BOARD_COLS;
                 break;
 
             case 1:  // bord bas
                 ty = BOARD_ROWS - 1;
-                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                tx = rand() % BOARD_COLS;
                 break;
 
             case 2:  // bord gauche
                 tx = 0;
-                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                ty = rand() % BOARD_ROWS;
                 break;
 
             case 3:  // bord droite
                 tx = BOARD_COLS - 1;
-                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                ty = rand() % BOARD_ROWS;
                 break;
         }
     } while (maze[ty][tx] != 0);  // continue jusqu’à trouver une case sol
@@ -194,8 +198,6 @@ void GameInit(Board *board)
     // Place le trophée
     gTrophe.x = tx;
     gTrophe.y = ty;
-    gTrophe.victoire = 0;
-    gTrophe.textureIndex = 5;
     TilePush(&board->tiles[ty][tx], 5);
 
 }
@@ -295,6 +297,9 @@ void GameUpdate(Board *board, float dt)
             GameInit(board);
             gPlayer.pv = 3;
             gameOver = false;
+            visionRadius = 1;
+            float moveDelay = 0.15f;
+
         }
         return;
     }
@@ -380,17 +385,20 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,6))
     {
-        moveDelay-+0.09f;   
+        moveDelay-+0.09f;
+        PlaySound(gFlash);
         TilePop(target);
     }
     if (TileContains(target,7))
     {
         visionRadius += 2;
+        PlaySound(gVision);
         TilePop(target);
     }
     if (TileContains(target,8))
     {
         gPlayer.pv+=1;
+        PlaySound(gHeart);
         TilePop(target);
     }
     

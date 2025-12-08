@@ -52,6 +52,9 @@ extern Sound gHitSound; // son de dommage
 extern Sound gEnemyMusic; // musique sur l'ennemi
 extern PowerUp gPowerUp; // powerup global
 extern Sound gVictoryMusic; // son de victoire
+extern Sound gFlash; // son power up vitesse
+extern Sound gVision; // son power up vision
+extern Sound gHeart; // son power up vie
 
 
 void GameInit(Board *board); // initialise le board

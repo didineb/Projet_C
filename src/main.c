@@ -40,6 +40,11 @@ int main(void)
     gDeathSound = LoadSound("assets/death_sound.ogg");
     gHitSound = LoadSound("assets/hit_sound.ogg");
     gVictoryMusic = LoadSound("assets/Panjabi2m.ogg");
+    gFlash = LoadSound("assets/kachow.mp3");
+    gHeart = LoadSound("assets/heart.ogg");
+
+    gVision = LoadSound("assets/vision.mp3");
+    SetSoundVolume(gVision, 0.2f); // son vision trop fort donc
     
     //---Gestion du son pour l'ennemi---//
     gEnemyMusic = LoadSound("assets/thecroods.mp3");
