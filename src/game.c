@@ -1,6 +1,7 @@
 #include "game.h"
 #include "stdlib.h"
 #include "math.h"
+#include <time.h>
 
 
 extern Texture2D gTileTextures[];
@@ -91,6 +92,8 @@ int maze[BOARD_ROWS][BOARD_COLS] = {
 
 void GameInit(Board *board)
 {
+    
+    srand(time(NULL));
     for (int y = 0; y < BOARD_ROWS; y++)
     {
         for (int x = 0; x < BOARD_COLS; x++)
@@ -133,7 +136,7 @@ void GameInit(Board *board)
     //spawn aléatoire de power-ups
     int xrand, yrand;
 
-    for (int i = 0; i < 4; i++)
+    for (int i = 0; i < 6; i++)
     {
         do {
             xrand = rand() % BOARD_COLS; // colonne aléatoire
@@ -145,9 +148,10 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 5) || // trophée
             xrand == 1 && yrand == 1                        // position de départ du joueur
         );
-
-        gPowerUp.textureIndex = 6; // power-up
-        TilePush(&board->tiles[yrand][xrand], 6); // ajoute le power-up
+        int texture_power = rand() % 3 + 6;  //random 6-8
+        gPowerUp.textureIndex = texture_power; // power-up
+        
+        TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
         
     }
     
@@ -322,7 +326,22 @@ void GameUpdate(Board *board, float dt)
         VictoryTime = GetTime();
         return;
     }
-
+    if (TileContains(target,6))
+    {
+        moveDelay-+0.09f;   
+        TilePop(target);
+    }
+    if (TileContains(target,7))
+    {
+        visionRadius += 2;
+        TilePop(target);
+    }
+    if (TileContains(target,8))
+    {
+        gPlayer.pv+=1;
+        TilePop(target);
+    }
+    
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 }
