@@ -124,23 +124,26 @@ void GameInit(Board *board)
 // IA ennemi basique : se rapproche du joueur en ligne droite
 void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 {
-    int dx = p->x - e->x;
-    int dy = p->y - e->y;
+    int dx = p->x - e->x;   //combien de cases le joueur est à droite ou à gauche de l'ennemi - flèche = pointeur d'adresse
+    int dy = p->y - e->y;   //combien de cases le joueur est est au-dessus ou en-dessous de l'ennemi
 
     int oldX = e->x;   // <-- Sauvegarde de l’ancienne position
     int oldY = e->y;
 
-    int tryX = e->x + (dx > 0 ? 1 : (dx < 0 ? -1 : 0));
+    // prochaine case tentée par l'ennemi
+    int tryX = e->x + (dx > 0 ? 1 : (dx < 0 ? -1 : 0)); // ? = if très court == si dx=>0 alors +1 sinon si dx<0 alors -1 sinon 0
     int tryY = e->y + (dy > 0 ? 1 : (dy < 0 ? -1 : 0));
 
-    bool moved = false;
+    bool moved = false; // indique si l’ennemi a bougé -> utilisé pour mettre à jour l'affichage de l'ennemi sur le board
 
-    if (abs(dx) >= abs(dy))
+    // priorité axe X 
+    // si la distance horizontale est plus grande que la distance verticale alors on essaye de bouger sur X en premier
+    if (abs(dx) >= abs(dy)) 
     {
-        if (!TileContains(&board->tiles[e->y][tryX], 1))
+        if (!TileContains(&board->tiles[e->y][tryX], 1))    // si la tuile n'est pas un mur
         {
-            e->x = tryX;
-            moved = true;
+            e->x = tryX;    // on bouge l'ennemi
+            moved = true;   // on indique qu'il a bougé
         }
         else if (!TileContains(&board->tiles[tryY][e->x], 1))
         {
@@ -148,7 +151,7 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
             moved = true;
         }
     }
-    else
+    else    // priorité axe Y
     {
         if (!TileContains(&board->tiles[tryY][e->x], 1))
         {
@@ -162,9 +165,9 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
         }
     }
 
-    if (moved)
+    if (moved)  // si l’ennemi a bougé, on met à jour le board en effaçant l’ancien emplacement et en ajoutant la nouvelle position
     {
-        // ✔️ Effacer L’ANCIEN emplacement
+        // efface L’ANCIEN emplacement
         Tile *oldTile = &board->tiles[oldY][oldX];
         for (int i = 0; i < oldTile->layerCount; i++)
         {
@@ -172,7 +175,7 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
                 oldTile->layers[i] = -1;
         }
 
-        // ✔️ Ajouter la NOUVELLE position
+        // ajoute la NOUVELLE position
         TilePush(&board->tiles[e->y][e->x], e->textureIndex);
     }
 }
@@ -213,38 +216,16 @@ void GameUpdate(Board *board, float dt)
         return; // pendant le Game Over, pas de déplacement
     }
 
-    static bool Victory = false;
-    static float VictoryTime = 0.0f;
-
-    if (Victory)
-    {
-        // Après 2.5s, réinitialiser le jeu
-        if (GetTime() - VictoryTime >= 2.5f) 
-        {
-            GameInit(board);
-            Victory = false;
-        }
-        return; // pendant le Game Over, pas de déplacement
-    }
-
-
-
-
-
-
-
     double now = GetTime();
 
-    // --- ✔ ENNEMI SE DÉPLACE TOUJOURS ---
+    // déplacement de l'ennemi
     if (now - gEnemy.lastMoveTime >= gEnemy.moveDelay)
     {
         UpdateEnemy(board, &gEnemy, &gPlayer);
         gEnemy.lastMoveTime = now;
     }
-    // -------------------------------------
 
-
-    // --- LOGIQUE DU JOUEUR ---
+    // déplacement du joueur
     int nextX = gPlayer.x;
     int nextY = gPlayer.y;
 
@@ -344,11 +325,6 @@ void GameDraw(const Board *board)
     if (gPlayer.pv == 0 || gameOver)
     {
         DrawText("GAME OVER", 400, 350, 80, RED);
-    }
-    static bool Victory = false; // même flag que dans GameUpdate
-    if (gTrophe.victoire==1 || Victory)
-    {
-        DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
     static bool Victory = false; // même flag que dans GameUpdate
     if (gTrophe.victoire==1 || Victory)
