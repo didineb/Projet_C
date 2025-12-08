@@ -131,6 +131,7 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f) 
         {
             GameInit(board);
+            Music music = LoadMusicStream("assets/Panjabi.ogg");
             gPlayer.pv = 3;
             gameOver = false;
         }
@@ -234,6 +235,6 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 400, 350, 80, RED);
+        DrawText("GAME OVER", 300, 300, 80, RED);
     }
 }
