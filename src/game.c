@@ -101,7 +101,7 @@ void GameInit(Board *board)
     gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    gEnemy.x = 3;
+    gEnemy.x = 9;
     gEnemy.y = 1;
     gEnemy.textureIndex = 3;
 
@@ -113,7 +113,68 @@ void GameInit(Board *board)
     TilePush(&board->tiles[gTrophe.y][gTrophe.x], 5);
     TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3);
 
+    gEnemy.lastMoveTime = 0;
+    gEnemy.moveDelay = 0.4; // ennemi bouge toutes les 0.4 secondes (400 ms)
+
 }
+
+
+// IA ennemi basique : se rapproche du joueur en ligne droite
+void UpdateEnemy(Board *board, Enemy *e, const Player *p)
+{
+    int dx = p->x - e->x;
+    int dy = p->y - e->y;
+
+    int oldX = e->x;   // <-- Sauvegarde de l’ancienne position
+    int oldY = e->y;
+
+    int tryX = e->x + (dx > 0 ? 1 : (dx < 0 ? -1 : 0));
+    int tryY = e->y + (dy > 0 ? 1 : (dy < 0 ? -1 : 0));
+
+    bool moved = false;
+
+    if (abs(dx) >= abs(dy))
+    {
+        if (!TileContains(&board->tiles[e->y][tryX], 1))
+        {
+            e->x = tryX;
+            moved = true;
+        }
+        else if (!TileContains(&board->tiles[tryY][e->x], 1))
+        {
+            e->y = tryY;
+            moved = true;
+        }
+    }
+    else
+    {
+        if (!TileContains(&board->tiles[tryY][e->x], 1))
+        {
+            e->y = tryY;
+            moved = true;
+        }
+        else if (!TileContains(&board->tiles[e->y][tryX], 1))
+        {
+            e->x = tryX;
+            moved = true;
+        }
+    }
+
+    if (moved)
+    {
+        // ✔️ Effacer L’ANCIEN emplacement
+        Tile *oldTile = &board->tiles[oldY][oldX];
+        for (int i = 0; i < oldTile->layerCount; i++)
+        {
+            if (oldTile->layers[i] == e->textureIndex)
+                oldTile->layers[i] = -1;
+        }
+
+        // ✔️ Ajouter la NOUVELLE position
+        TilePush(&board->tiles[e->y][e->x], e->textureIndex);
+    }
+}
+
 
 void GameUpdate(Board *board, float dt)
 {
@@ -131,7 +192,6 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f) 
         {
             GameInit(board);
-            Music music = LoadMusicStream("assets/Panjabi.ogg");
             gPlayer.pv = 3;
             gameOver = false;
         }
@@ -145,11 +205,20 @@ void GameUpdate(Board *board, float dt)
     // Déplacement avec délai
     if (now - lastMoveTime >= moveDelay)
     {
-        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now;}
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now;}
+        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now;}
+        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now;}
     }
+
+    double now = GetTime();
+
+    if (now - gEnemy.lastMoveTime >= gEnemy.moveDelay)
+    {
+        UpdateEnemy(board, &gEnemy, &gPlayer);
+        gEnemy.lastMoveTime = now;
+    }
+
 
     // Récupère la tuile cible
     Tile *target = &board->tiles[nextY][nextX];
@@ -174,6 +243,18 @@ void GameUpdate(Board *board, float dt)
         }
         return;
     }
+
+    // Si l'ennemi atteint le joueur
+    if (gEnemy.x == gPlayer.x && gEnemy.y == gPlayer.y)
+    {
+        gPlayer.pv--;
+        if (gPlayer.pv <= 0)
+        {
+            gameOver = true;
+            gameOverTime = GetTime();
+        }
+    }
+
 
     if (TileContains(target, 5)){
         gTrophe.victoire += 1;
@@ -235,6 +316,6 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 300, 300, 80, RED);
+        DrawText("GAME OVER", 400, 350, 80, RED);
     }
 }
