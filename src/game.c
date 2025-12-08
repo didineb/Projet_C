@@ -199,6 +199,40 @@ void GameUpdate(Board *board, float dt)
         return;
     }
 
+    static bool Victory = false;
+    static float VictoryTime = 0.0f;
+
+    if (Victory)
+    {
+        // Après 2.5s, réinitialiser le jeu
+        if (GetTime() - VictoryTime >= 2.5f) 
+        {
+            GameInit(board);
+            Victory = false;
+        }
+        return; // pendant le Game Over, pas de déplacement
+    }
+
+    static bool Victory = false;
+    static float VictoryTime = 0.0f;
+
+    if (Victory)
+    {
+        // Après 2.5s, réinitialiser le jeu
+        if (GetTime() - VictoryTime >= 2.5f) 
+        {
+            GameInit(board);
+            Victory = false;
+        }
+        return; // pendant le Game Over, pas de déplacement
+    }
+
+
+
+
+
+
+
     double now = GetTime();
 
     // --- ✔ ENNEMI SE DÉPLACE TOUJOURS ---
@@ -250,6 +284,9 @@ void GameUpdate(Board *board, float dt)
         gTrophe.victoire += 1;
         gPlayer.x = 1;
         gPlayer.y = 1;
+        gPlayer.x = 1;
+        Victory = true;
+        VictoryTime = GetTime();
         return;
     }
 
@@ -307,5 +344,15 @@ void GameDraw(const Board *board)
     if (gPlayer.pv == 0 || gameOver)
     {
         DrawText("GAME OVER", 400, 350, 80, RED);
+    }
+    static bool Victory = false; // même flag que dans GameUpdate
+    if (gTrophe.victoire==1 || Victory)
+    {
+        DrawText("VICTOIRE", 300, 300, 80, YELLOW);
+    }
+    static bool Victory = false; // même flag que dans GameUpdate
+    if (gTrophe.victoire==1 || Victory)
+    {
+        DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
 }
