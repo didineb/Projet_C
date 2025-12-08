@@ -1,6 +1,6 @@
 # Makefile
 
-CC      ?= clang
+CC      ?= gcc
 CFLAGS  ?= -std=c17 -Wall -Wextra -g
 CFLAGS  += -Isrc -Iinclude
 LDFLAGS ?=

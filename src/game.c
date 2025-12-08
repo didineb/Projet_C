@@ -13,8 +13,8 @@ Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
 Sound gVictoryMusic; // musique de victoire
-
 PowerUp gPowerUp; // powerup global
+int visionRadius = 40; // rayon de vision du joueur
 
 // ******************************************
 // ******************************************
@@ -66,28 +66,28 @@ float DistancePlayerEnemy() { // fonction qui calcule la distance entre le playe
 // Gestion du board et des entrées
 
 int maze[BOARD_ROWS][BOARD_COLS] = {
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1},
     {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
-    {1,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1,0,0,0,1},
-    {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,1,0,1},
-    {1,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
-    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,1,1,1,0,1},
-    {1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0,0,0,1,0,1,0,1,0,1},
-    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1},
-    {1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
+    {1,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,1,1,0,1,1,0,1,1,1,0,1,0,0,0,0},
+    {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1},
+    {0,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,0,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,1,0,1,0,0,1,0,1,0,1,1,1,0,0},
+    {1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,0,1,0,1,1,0,0,0,1,1,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1},
+    {1,0,1,1,1,1,1,0,1,1,0,1,1,1,0,1,0,0,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
-    {1,1,0,1,1,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1},
-    {1,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1},
-    {1,0,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1},
+    {1,1,0,1,1,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,0},
+    {0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,0,0,1,0,0,0,0,0,1,0,1},
+    {1,0,1,0,1,1,0,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,0,1},
     {1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
-    {1,0,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,0,1,0,1},
+    {1,0,1,1,1,0,1,1,0,1,1,1,1,0,1,1,0,1,0,1,1,1,0,1,1,1,0,1,0,1,0,1,1,1},
     {1,0,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1},
-    {1,1,1,1,0,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1},
+    {1,1,1,1,0,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0,0,0,1,0,1,0,1,0,0},
     {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1},
-    {1,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
-    {1,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1},
+    {0,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
+    {1,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,1,0,0,0,1},
     {1,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1},
-    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
+    {1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,1},
 };
 
 
@@ -118,25 +118,30 @@ void GameInit(Board *board)
     gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    gEnemy.x = 9;
-    gEnemy.y = 1;
     gEnemy.textureIndex = 3;
-
-    gTrophe.x = 32;
-    gTrophe.y = 21;
-    gTrophe.victoire = 0;
-    gTrophe.textureIndex = 5;
-
-    TilePush(&board->tiles[gTrophe.y][gTrophe.x], 5);
-    TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3);
-
     gEnemy.lastMoveTime = 0;
-    gEnemy.moveDelay = 0.4; // ennemi bouge toutes les 0.4 secondes (400 ms)
+    gEnemy.moveDelay = 0.2;
 
-
-    //spawn aléatoire de power-ups
     int xrand, yrand;
 
+    do {
+        xrand = rand() % BOARD_COLS; // colonne aléatoire
+        yrand = rand() % BOARD_ROWS; // ligne aléatoire
+    } while (
+        TileContains(&board->tiles[yrand][xrand], 1) || // mur
+        TileContains(&board->tiles[yrand][xrand], 2) || // joueur
+        TileContains(&board->tiles[yrand][xrand], 6) || // power-up
+        TileContains(&board->tiles[yrand][xrand], 7) || // power-up
+        TileContains(&board->tiles[yrand][xrand], 8) || // power-up
+        TileContains(&board->tiles[yrand][xrand], 5) || // trophée
+        xrand == 1 && yrand == 1                        // position de départ du joueur
+    );
+    
+    gEnemy.x = xrand;
+    gEnemy.y = yrand;
+    TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3); // place l'ennemi sur le board
+
+    //spawn aléatoire de power-ups  
     for (int i = 0; i < 6; i++)
     {
         do {
@@ -156,7 +161,42 @@ void GameInit(Board *board)
         
     }
     
-    
+    // Spawn trophée dans les bordures uniquement sur les cases = 0
+    int tx, ty;
+
+    do {
+        // Choisir aléatoirement une bordure
+        int side = rand() % 4;
+
+        switch (side) {
+            case 0:  // bord haut
+                ty = 0;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                break;
+
+            case 1:  // bord bas
+                ty = BOARD_ROWS - 1;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                break;
+
+            case 2:  // bord gauche
+                tx = 0;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                break;
+
+            case 3:  // bord droite
+                tx = BOARD_COLS - 1;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                break;
+        }
+    } while (maze[ty][tx] != 0);  // continue jusqu’à trouver une case sol
+
+    // Place le trophée
+    gTrophe.x = tx;
+    gTrophe.y = ty;
+    gTrophe.victoire = 0;
+    gTrophe.textureIndex = 5;
+    TilePush(&board->tiles[ty][tx], 5);
 
 }
 
