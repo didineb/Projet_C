@@ -14,7 +14,7 @@ Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
 Sound gVictoryMusic; // musique de victoire
 PowerUp gPowerUp; // powerup global
-int visionRadius = 40; // rayon de vision du joueur
+int visionRadius = 1; // rayon de vision du joueur
 
 // ******************************************
 // ******************************************
@@ -120,7 +120,7 @@ void GameInit(Board *board)
 
     gEnemy.textureIndex = 3;
     gEnemy.lastMoveTime = 0;
-    gEnemy.moveDelay = 0.2;
+    gEnemy.moveDelay = 0.3;
 
     int xrand, yrand;
 
@@ -333,6 +333,16 @@ void GameUpdate(Board *board, float dt)
         else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; }
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
     }
+
+    if (IsKeyPressed(KEY_F))
+    {
+        visionRadius += 40;
+    }
+    
+    if (IsKeyPressed(KEY_G))
+    {
+        visionRadius -= 40;
+    }    
 
     // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
