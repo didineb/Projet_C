@@ -16,7 +16,6 @@ Sound gVictoryMusic; // musique de victoire
 Sound gFlash; // son power up vitesse
 Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
-
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 
@@ -166,7 +165,42 @@ void GameInit(Board *board)
         
     }
     
-    
+    // Spawn trophée dans les bordures uniquement sur les cases = 0
+    int tx, ty;
+
+    do {
+        // Choisir aléatoirement une bordure
+        int side = rand() % 4;
+
+        switch (side) {
+            case 0:  // bord haut
+                ty = 0;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                break;
+
+            case 1:  // bord bas
+                ty = BOARD_ROWS - 1;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
+                break;
+
+            case 2:  // bord gauche
+                tx = 0;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                break;
+
+            case 3:  // bord droite
+                tx = BOARD_COLS - 1;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
+                break;
+        }
+    } while (maze[ty][tx] != 0);  // continue jusqu’à trouver une case sol
+
+    // Place le trophée
+    gTrophe.x = tx;
+    gTrophe.y = ty;
+    gTrophe.victoire = 0;
+    gTrophe.textureIndex = 5;
+    TilePush(&board->tiles[ty][tx], 5);
 
 }
 
