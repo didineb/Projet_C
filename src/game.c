@@ -1,5 +1,6 @@
 #include "game.h"
 #include "stdlib.h"
+#include "math.h"
 
 
 extern Texture2D gTileTextures[];
@@ -9,6 +10,8 @@ Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
 Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
+Sound gEnemyMusic; // son sur l'ennemi
+
 
 // ******************************************
 // ******************************************
@@ -49,16 +52,23 @@ static int TilePop(Tile *t)
     return tex;
 }
 
+float DistancePlayerEnemy() { // fonction qui calcule la distance entre le player et l'ennemi
+    float dx = (float)gPlayer.x - (float)gEnemy.x;
+    float dy = (float)gPlayer.y - (float)gEnemy.y;
+    return sqrtf(dx*dx + dy*dy);
+}
+
+
 // ******************************************
 // Gestion du board et des entrées
 
 int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
-    {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,1,0,0,0,1,0,1},
+    {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
     {1,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,0,1,0,1,1,0,1,1,1,0,1,0,0,0,1},
-    {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,1,0,0,0,0,0,0,1,0,1,0,1,0,1},
-    {1,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,0,1,0,0,1,1,1,1,0,1,0,1,0,0,0,1},
-    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,1,1,0,0,1},
+    {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,1,0,1},
+    {1,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
+    {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,1,1,1,0,1},
     {1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1},
     {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1},
     {1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
@@ -73,7 +83,7 @@ int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,0,0,1},
     {1,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
     {1,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,1,0,0,0,1},
-    {1,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,1,1,0,1,0,0,0,1,0,1,0,1,0,1},
+    {1,0,0,1,0,0,0,1,0,0,0,1,0,1,0,0,0,1,0,1,0,1,0,1,0,0,0,1,0,1,0,1,0,1},
     {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1},
 };
 
@@ -180,6 +190,23 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 
 void GameUpdate(Board *board, float dt)
 {
+
+    // Dans GameUpdate
+    if (!IsSoundPlaying(gEnemyMusic)) { // si la musique ne se joue pas
+        PlaySound(gEnemyMusic); // Redémarre dès qu’il s’arrête pour faire une boucle
+    }
+
+    // ajuster volume selon distance :
+    float dist = DistancePlayerEnemy(); //fonction qui renvoie la distance en tuile joueur/ennemi
+    float maxDist = 10.0f; // distance max
+
+    float volume = 1.0f - (dist / maxDist);
+    if (volume < 0.0f) volume = 0.0f;
+    if (volume > 1.0f) volume = 1.0f;
+
+    SetSoundVolume(gEnemyMusic, volume);
+
+
     float moveDelay = 0.15f;
     static float lastMoveTime = 0.0f;
 
@@ -212,26 +239,6 @@ void GameUpdate(Board *board, float dt)
         }
         return; // pendant le Game Over, pas de déplacement
     }
-
-    static bool Victory = false;
-    static float VictoryTime = 0.0f;
-
-    if (Victory)
-    {
-        // Après 2.5s, réinitialiser le jeu
-        if (GetTime() - VictoryTime >= 2.5f) 
-        {
-            GameInit(board);
-            Victory = false;
-        }
-        return; // pendant le Game Over, pas de déplacement
-    }
-
-
-
-
-
-
 
     double now = GetTime();
 
@@ -346,11 +353,7 @@ void GameDraw(const Board *board)
         DrawText("GAME OVER", 400, 350, 80, RED);
     }
     static bool Victory = false; // même flag que dans GameUpdate
-    if (gTrophe.victoire==1 || Victory)
-    {
-        DrawText("VICTOIRE", 300, 300, 80, YELLOW);
-    }
-    static bool Victory = false; // même flag que dans GameUpdate
+    
     if (gTrophe.victoire==1 || Victory)
     {
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);

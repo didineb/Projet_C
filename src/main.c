@@ -36,8 +36,15 @@ int main(void)
     Music music = LoadMusicStream("assets/Panjabi.ogg");
     gDeathSound = LoadSound("assets/death_sound.ogg");
     gHitSound = LoadSound("assets/hit_sound.ogg");
+    
+    //---Gestion du son pour l'ennemi---//
+    gEnemyMusic = LoadSound("assets/enemy_music.ogg");
+    PlaySound(gEnemyMusic);
+    //-------//
+
 
     PlayMusicStream(music);
+    SetMusicVolume(music, 0.1f);
 
     while (!WindowShouldClose())
     {

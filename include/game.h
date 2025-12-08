@@ -45,6 +45,7 @@ extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
 extern Sound gDeathSound; // son de mort
 extern Sound gHitSound; // son de dommage
+extern Sound gEnemyMusic; // musique sur l'ennemi
 
 
 void GameInit(Board *board); // initialise le board
