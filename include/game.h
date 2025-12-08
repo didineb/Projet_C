@@ -7,7 +7,7 @@
 #define BOARD_COLS 34
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
-#define visionRadius 1 // rayon de vision du joueur
+#define visionRadius 30  // rayon de vision du joueur
 
 typedef struct
 {
@@ -24,12 +24,14 @@ typedef struct
 typedef struct {
     int x, y; // position sur le board
     int pv;           
-    int textureIndex;   // index de la texture dans gTileTextures
+    int textureIndex;
 } Player;
 
 typedef struct{
     int x, y;
     int textureIndex;
+    double lastMoveTime;
+    double moveDelay;
 } Enemy;
 
 typedef struct{
@@ -42,10 +44,12 @@ extern Player gPlayer;  // joueur global
 extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
 extern Sound gDeathSound; // son de mort
+extern Sound gHitSound; // son de dommage
 
 
 void GameInit(Board *board); // initialise le board
 void GameUpdate(Board *board, float dt); // mise à jour du jeu
 void GameDraw(const Board *board); // affichage du jeu
+
 
 #endif

@@ -8,6 +8,7 @@ Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
 Sound gDeathSound; // son de mort
+Sound gHitSound; // son de dommage
 
 // ******************************************
 // ******************************************
@@ -102,9 +103,7 @@ void GameInit(Board *board)
     gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    gEnemy.x = 3;
-    gEnemy.y = 1;
-    gEnemy.x = 3;
+    gEnemy.x = 9;
     gEnemy.y = 1;
     gEnemy.textureIndex = 3;
 
@@ -116,26 +115,100 @@ void GameInit(Board *board)
     TilePush(&board->tiles[gTrophe.y][gTrophe.x], 5);
     TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3);
 
+    gEnemy.lastMoveTime = 0;
+    gEnemy.moveDelay = 0.4; // ennemi bouge toutes les 0.4 secondes (400 ms)
+
 }
+
+
+// IA ennemi basique : se rapproche du joueur en ligne droite
+void UpdateEnemy(Board *board, Enemy *e, const Player *p)
+{
+    int dx = p->x - e->x;
+    int dy = p->y - e->y;
+
+    int oldX = e->x;   // <-- Sauvegarde de l’ancienne position
+    int oldY = e->y;
+
+    int tryX = e->x + (dx > 0 ? 1 : (dx < 0 ? -1 : 0));
+    int tryY = e->y + (dy > 0 ? 1 : (dy < 0 ? -1 : 0));
+
+    bool moved = false;
+
+    if (abs(dx) >= abs(dy))
+    {
+        if (!TileContains(&board->tiles[e->y][tryX], 1))
+        {
+            e->x = tryX;
+            moved = true;
+        }
+        else if (!TileContains(&board->tiles[tryY][e->x], 1))
+        {
+            e->y = tryY;
+            moved = true;
+        }
+    }
+    else
+    {
+        if (!TileContains(&board->tiles[tryY][e->x], 1))
+        {
+            e->y = tryY;
+            moved = true;
+        }
+        else if (!TileContains(&board->tiles[e->y][tryX], 1))
+        {
+            e->x = tryX;
+            moved = true;
+        }
+    }
+
+    if (moved)
+    {
+        // ✔️ Effacer L’ANCIEN emplacement
+        Tile *oldTile = &board->tiles[oldY][oldX];
+        for (int i = 0; i < oldTile->layerCount; i++)
+        {
+            if (oldTile->layers[i] == e->textureIndex)
+                oldTile->layers[i] = -1;
+        }
+
+        // ✔️ Ajouter la NOUVELLE position
+        TilePush(&board->tiles[e->y][e->x], e->textureIndex);
+    }
+}
+
 
 void GameUpdate(Board *board, float dt)
 {
-    // Durée minimale entre deux mouvements (en secondes)
     float moveDelay = 0.15f;
     static float lastMoveTime = 0.0f;
 
-    // Gestion du Game Over
     static bool gameOver = false;
     static float gameOverTime = 0.0f;
 
+    static float HitTime = 0.0f;
+
     if (gameOver)
     {
-        // Après 2.5s, réinitialiser le jeu
-        if (GetTime() - gameOverTime >= 2.5f) 
+        if (GetTime() - gameOverTime >= 2.5f)
         {
             GameInit(board);
             gPlayer.pv = 3;
             gameOver = false;
+        }
+        return;
+    }
+
+    static bool Victory = false;
+    static float VictoryTime = 0.0f;
+
+    if (Victory)
+    {
+        // Après 2.5s, réinitialiser le jeu
+        if (GetTime() - VictoryTime >= 2.5f) 
+        {
+            GameInit(board);
+            Victory = false;
         }
         return; // pendant le Game Over, pas de déplacement
     }
@@ -157,11 +230,24 @@ void GameUpdate(Board *board, float dt)
 
 
 
-    float now = GetTime();   // temps actuel
+
+
+
+    double now = GetTime();
+
+    // --- ✔ ENNEMI SE DÉPLACE TOUJOURS ---
+    if (now - gEnemy.lastMoveTime >= gEnemy.moveDelay)
+    {
+        UpdateEnemy(board, &gEnemy, &gPlayer);
+        gEnemy.lastMoveTime = now;
+    }
+    // -------------------------------------
+
+
+    // --- LOGIQUE DU JOUEUR ---
     int nextX = gPlayer.x;
     int nextY = gPlayer.y;
 
-    // Déplacement avec délai
     if (now - lastMoveTime >= moveDelay)
     {
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; }
@@ -170,33 +256,33 @@ void GameUpdate(Board *board, float dt)
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
     }
 
-    // Récupère la tuile cible
+    // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
 
-    // Limites du board
-    if (nextX < 0 || nextX >= BOARD_COLS || nextY < 0 || nextY >= BOARD_ROWS) return;
-
-    // appel de la fonction de vérification des tuiles et si la tuile cible est égale à 1 c'est alors un mur
     if (TileContains(target, 1))
-    {
-        // collision → on ne bouge pas
         return;
-    }
 
     if (TileContains(target, 3))
     {
-        gPlayer.pv--;
-        if (gPlayer.pv == 0)
+        if (GetTime() - HitTime >= 2.5f)
+        {
+            gPlayer.pv--;
+            PlaySound(gHitSound);
+            HitTime = GetTime();
+        }
+        if (gPlayer.pv <= 0)
         {
             PlaySound(gDeathSound);
             gameOver = true;
-            gameOverTime = GetTime(); // démarre le délai avant réinitialisation
+            gameOverTime = GetTime();
         }
         return;
     }
 
-    if (TileContains(target, 5)){
+    if (TileContains(target, 5))
+    {
         gTrophe.victoire += 1;
+        gPlayer.x = 1;
         gPlayer.y = 1;
         gPlayer.x = 1;
         Victory = true;
@@ -204,10 +290,10 @@ void GameUpdate(Board *board, float dt)
         return;
     }
 
-    // Déplacement validé
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 }
+
 
 void GameDraw(const Board *board)
 {
@@ -257,7 +343,12 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 300, 300, 80, RED);
+        DrawText("GAME OVER", 400, 350, 80, RED);
+    }
+    static bool Victory = false; // même flag que dans GameUpdate
+    if (gTrophe.victoire==1 || Victory)
+    {
+        DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
     static bool Victory = false; // même flag que dans GameUpdate
     if (gTrophe.victoire==1 || Victory)

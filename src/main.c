@@ -23,7 +23,7 @@ int main(void)
     gTileTextures[1] = LoadTexture("assets/wall.png");
     gTileTextures[2] = LoadTexture("assets/knight.png");
     gTileTextures[3] = LoadTexture("assets/skeleton.png");
-
+    gTileTextures[4] = LoadTexture("assets/attack.png");
     gTileTextures[5] = LoadTexture("assets/trophy.png");
     gTileTextureCount = 6;
 
@@ -35,6 +35,7 @@ int main(void)
 
     Music music = LoadMusicStream("assets/Panjabi.ogg");
     gDeathSound = LoadSound("assets/death_sound.ogg");
+    gHitSound = LoadSound("assets/hit_sound.ogg");
 
     PlayMusicStream(music);
 
