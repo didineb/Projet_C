@@ -3,7 +3,7 @@
 
 
 // Gestionnaire de texture
-Texture2D gTileTextures[7];
+Texture2D gTileTextures[6];
 int gTileTextureCount = 0;
 
 
@@ -25,8 +25,7 @@ int main(void)
     gTileTextures[3] = LoadTexture("assets/skeleton.png");
     gTileTextures[4] = LoadTexture("assets/attack.png");
     gTileTextures[5] = LoadTexture("assets/trophy.png");
-    gTileTextures[6] = LoadTexture("assets/attack.png");
-    gTileTextureCount = 7;
+    gTileTextureCount = 6;
 
     
 
@@ -37,19 +36,20 @@ int main(void)
     Music music = LoadMusicStream("assets/Panjabi.ogg");
     gDeathSound = LoadSound("assets/death_sound.ogg");
     gHitSound = LoadSound("assets/hit_sound.ogg");
+    gVictoryMusic = LoadSound("assets/Panjabi2m.ogg");
     
     //---Gestion du son pour l'ennemi---//
-    gEnemyMusic = LoadSound("assets/enemy_music.ogg");
+    gEnemyMusic = LoadSound("assets/thecroods.mp3");
+    SetSoundVolume(gEnemyMusic, 2.0f);
     PlaySound(gEnemyMusic);
     //-------//
 
 
     PlayMusicStream(music);
-    SetMusicVolume(music, 0.1f);
+    SetMusicVolume(music, 0.0f);
 
     while (!WindowShouldClose())
     {
-        
         UpdateMusicStream(music);
 
         float dt = GetFrameTime(); 

@@ -7,7 +7,7 @@
 #define BOARD_COLS 34
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
-#define visionRadius 40  // rayon de vision du joueur
+#define visionRadius 1 // rayon de vision du joueur
 
 typedef struct
 {
@@ -52,6 +52,7 @@ extern Sound gDeathSound; // son de mort
 extern Sound gHitSound; // son de dommage
 extern Sound gEnemyMusic; // musique sur l'ennemi
 extern PowerUp gPowerUp; // powerup global
+extern Sound gVictoryMusic; // son de victoire
 
 
 void GameInit(Board *board); // initialise le board

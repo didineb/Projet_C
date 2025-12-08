@@ -11,6 +11,7 @@ Trophe gTrophe;
 Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
+Sound gVictoryMusic; // musique de victoire
 
 PowerUp gPowerUp; // powerup global
 
@@ -70,7 +71,7 @@ int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,1,0,0,0,0,0,0,0,0,1,0,1,0,1},
     {1,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,1,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
     {1,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1,0,1,1,1,0,1},
-    {1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0,1,0,1,0,1,0,1,0,1},
+    {1,1,1,1,0,1,1,1,1,0,1,0,1,1,1,1,0,1,0,1,0,1,1,1,0,0,0,1,0,1,0,1,0,1},
     {1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,1,0,1},
     {1,0,1,1,1,1,1,0,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1},
     {1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,0,0,0,1},
@@ -315,6 +316,7 @@ void GameUpdate(Board *board, float dt)
     if (TileContains(target, 5))
     {
         gTrophe.victoire += 1;
+        PlaySound(gVictoryMusic);
         gPlayer.x = 1;
         gPlayer.y = 1;
         gPlayer.x = 1;
@@ -376,7 +378,7 @@ void GameDraw(const Board *board)
     static bool gameOver = false; // même flag que dans GameUpdate
     if (gPlayer.pv == 0 || gameOver)
     {
-        DrawText("GAME OVER", 400, 350, 80, RED);
+        DrawText("GAME OVER", 300, 300, 80, RED);
     }
 
     // Affiche Victoire si nécessaire
