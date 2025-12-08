@@ -106,8 +106,8 @@ void GameInit(Board *board)
     gEnemy.y = 1;
     gEnemy.textureIndex = 3;
 
-    gTrophe.x = 29;
-    gTrophe.y = 16;
+    gTrophe.x = 32;
+    gTrophe.y = 21;
     gTrophe.victoire = 0;
     gTrophe.textureIndex = 5;
 
