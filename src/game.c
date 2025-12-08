@@ -7,6 +7,8 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
+Sound gDeathSound; // son de mort
+
 // ******************************************
 // ******************************************
 
@@ -132,7 +134,6 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f) 
         {
             GameInit(board);
-            Music music = LoadMusicStream("assets/Panjabi.ogg");
             gPlayer.pv = 3;
             gameOver = false;
         }
@@ -170,6 +171,7 @@ void GameUpdate(Board *board, float dt)
         gPlayer.pv--;
         if (gPlayer.pv == 0)
         {
+            PlaySound(gDeathSound);
             gameOver = true;
             gameOverTime = GetTime(); // démarre le délai avant réinitialisation
         }

@@ -41,6 +41,8 @@ typedef struct{
 extern Player gPlayer;  // joueur global
 extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
+extern Sound gDeathSound; // son de mort
+
 
 void GameInit(Board *board); // initialise le board
 void GameUpdate(Board *board, float dt); // mise à jour du jeu
