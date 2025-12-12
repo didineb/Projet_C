@@ -18,6 +18,7 @@ Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
+float moveDelay = 0.15f;
 float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
 static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
@@ -184,7 +185,7 @@ void GameInit(Board *board)
         TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
         
     }
-
+    
     // Spawn trophée dans les bordures uniquement sur les cases = 0
     int tx, ty;
 
@@ -195,22 +196,22 @@ void GameInit(Board *board)
         switch (side) {
             case 0:  // bord haut
                 ty = 0;
-                tx = rand() % BOARD_COLS;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
                 break;
 
             case 1:  // bord bas
                 ty = BOARD_ROWS - 1;    // dernière ligne
-                tx = rand() % BOARD_COLS;
+                tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
                 break;
 
             case 2:  // bord gauche
                 tx = 0;
-                ty = rand() % BOARD_ROWS;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
                 break;
 
             case 3:  // bord droite
                 tx = BOARD_COLS - 1;    // dernière colonne
-                ty = rand() % BOARD_ROWS;
+                ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
                 break;
         }
     } while (maze[ty][tx] != 0);  // continue jusqu’à trouver une case sol
@@ -218,6 +219,8 @@ void GameInit(Board *board)
     // Place le trophée
     gTrophe.x = tx;
     gTrophe.y = ty;
+    gTrophe.victoire = 0;
+    gTrophe.textureIndex = 5;
     TilePush(&board->tiles[ty][tx], 5);
 
     startTime = GetTime();
@@ -301,7 +304,7 @@ void GameUpdate(Board *board, float dt)
 
     // ajuster volume selon distance :
     float dist = DistancePlayerEnemy(); //fonction qui renvoie la distance en tuile joueur/ennemi
-    float maxDist = 10.0f; // distance max
+    float maxDist = 15.0f; // distance max
 
     float volume = 1.0f - (dist / maxDist);
     if (volume < 0.0f) volume = 0.0f;
@@ -310,10 +313,9 @@ void GameUpdate(Board *board, float dt)
     SetSoundVolume(gEnemyMusic, volume);
 
 
-    float moveDelay = 0.15f;
     static float lastMoveTime = 0.0f;
 
-    static bool gameOver = false;
+    static bool gameOver = false; //var pour delai mort
     static float gameOverTime = 0.0f;
 
     static float HitTime = 0.0f;
@@ -390,10 +392,11 @@ void GameUpdate(Board *board, float dt)
     if (TileContains(target, 1))
         return;
 
-    if (TileContains(target, 3))
+    if (TileContains(target, 3)) // si joueur et ennemi sur la même case -> le joueur perd un PV
     {
-        if (GetTime() - HitTime >= 2.5f)
+        if (GetTime() - HitTime >= 2.5f) //delai pour un cooldown sur la perte de PV
         {
+            
             gPlayer.pv--;
             PlaySound(gHitSound);
             HitTime = GetTime();
@@ -421,7 +424,7 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,6))
     {
-        moveDelay += 0.09f;
+        moveDelay-+0.09f;
         PlaySound(gFlash);
         TilePop(target);
     }
