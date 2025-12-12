@@ -248,7 +248,7 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
         }
     }
 
-    if (moved)  // si l’ennemi a bougé, on met à jour le board en effaçant l’ancien emplacement et en ajoutant la nouvelle position
+    if (moved)  // si l’ennemi a bougé, on met à jour le board en effaçant l’ancienne tuile ennemi et en ajoutant la nouvelle position
     {
         // efface L’ANCIEN emplacement
         Tile *oldTile = &board->tiles[oldY][oldX];
