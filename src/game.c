@@ -19,7 +19,6 @@ Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 
-
 // ******************************************
 // ******************************************
 
@@ -124,7 +123,7 @@ void GameInit(Board *board)
 
     gEnemy.textureIndex = 3;
     gEnemy.lastMoveTime = 0;
-    gEnemy.moveDelay = 0.2;
+    gEnemy.moveDelay = 0.3;
 
     int xrand, yrand;
 
@@ -268,14 +267,14 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 void GameUpdate(Board *board, float dt)
 {
 
-    // Dans GameUpdate
+    // boucle musique
     if (!IsSoundPlaying(gEnemyMusic)) { // si la musique ne se joue pas
         PlaySound(gEnemyMusic); // Redémarre dès qu’il s’arrête pour faire une boucle
     }
 
     // ajuster volume selon distance :
     float dist = DistancePlayerEnemy(); //fonction qui renvoie la distance en tuile joueur/ennemi
-    float maxDist = 10.0f; // distance max
+    float maxDist = 15.0f; // distance max
 
     float volume = 1.0f - (dist / maxDist);
     if (volume < 0.0f) volume = 0.0f;
@@ -284,10 +283,10 @@ void GameUpdate(Board *board, float dt)
     SetSoundVolume(gEnemyMusic, volume);
 
 
-    float moveDelay = 0.15f;
+    float moveDelay = 0.15f; //vitesse
     static float lastMoveTime = 0.0f;
 
-    static bool gameOver = false;
+    static bool gameOver = false; //var pour delai mort
     static float gameOverTime = 0.0f;
 
     static float HitTime = 0.0f;
@@ -341,16 +340,27 @@ void GameUpdate(Board *board, float dt)
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
     }
 
+    if (IsKeyPressed(KEY_F))
+    {
+        visionRadius += 40;
+    }
+    
+    if (IsKeyPressed(KEY_G))
+    {
+        visionRadius -= 40;
+    }    
+
     // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
 
     if (TileContains(target, 1))
         return;
 
-    if (TileContains(target, 3))
+    if (TileContains(target, 3)) // si joueur et ennemi sur la même case -> le joueur perd un PV
     {
-        if (GetTime() - HitTime >= 2.5f)
+        if (GetTime() - HitTime >= 2.5f) //delai pour un cooldown sur la perte de PV
         {
+            
             gPlayer.pv--;
             PlaySound(gHitSound);
             HitTime = GetTime();
