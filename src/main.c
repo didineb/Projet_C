@@ -37,7 +37,7 @@ int main(void)
     GameInit(&board);
 
     Music music = LoadMusicStream("assets/Panjabi.ogg");
-    gDeathSound = LoadSound("assets/death_sound.ogg");
+    gDeathSound = LoadSound("assets/gameover.mp3");
     gHitSound = LoadSound("assets/hit_sound.ogg");
     gVictoryMusic = LoadSound("assets/Panjabi2m.ogg");
     gFlash = LoadSound("assets/kachow.mp3");
