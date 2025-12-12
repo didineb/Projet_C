@@ -18,6 +18,9 @@ Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
+float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
+static float startTime = 0; // temps de début du jeu
+float gTimer = 0; // temps écoulé depuis le début du jeu
 
 // ******************************************
 // ******************************************
@@ -93,6 +96,22 @@ int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,1},
 };
 
+void UpdateRecords(float currentTime)
+{
+    for (int i = 0; i < MAX_RECORDS; i++)
+    {
+        if (currentTime < scoreBoard[i])    // si le temps actuel est meilleur qu'un des records
+        {
+            // va décaler les scores plus bas
+            for (int j = MAX_RECORDS - 1; j > i; j--)
+            {
+                scoreBoard[j] = scoreBoard[j - 1];
+            }
+            scoreBoard[i] = currentTime; // insère le nouveau record
+            break;
+        }
+    }
+}
 
 void GameInit(Board *board)
 {
@@ -200,6 +219,8 @@ void GameInit(Board *board)
     gTrophe.y = ty;
     TilePush(&board->tiles[ty][tx], 5);
 
+    startTime = GetTime();
+
 }
 
 
@@ -268,7 +289,8 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 void GameUpdate(Board *board, float dt)
 {
 
-    // Dans GameUpdate
+    gTimer = GetTime() - startTime; // met à jour le timer
+    
     if (!IsSoundPlaying(gEnemyMusic)) { // si la musique ne se joue pas
         PlaySound(gEnemyMusic); // Redémarre dès qu’il s’arrête pour faire une boucle
     }
@@ -385,6 +407,7 @@ void GameUpdate(Board *board, float dt)
     {
         gTrophe.victoire += 1;
         PlaySound(gVictoryMusic);
+        UpdateRecords(gTimer); // met à jour le tableau des records
         gPlayer.x = 1;
         gPlayer.y = 1;
         gPlayer.x = 1;
@@ -473,5 +496,12 @@ void GameDraw(const Board *board)
     {
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
-    
+
+    DrawText(TextFormat("Time : %.2f", gTimer), 170, 10, 20, GREEN);
+
+    for (int i = 0; i < MAX_RECORDS; i++)
+    {
+        DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 600, 10 + i * 30, 20, WHITE);
+    }
+
 }
