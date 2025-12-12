@@ -125,6 +125,7 @@ void GameInit(Board *board)
     gEnemy.lastMoveTime = 0;
     gEnemy.moveDelay = 0.3;
 
+    // spawn aléatoire de l'ennemi
     int xrand, yrand;
 
     do {
@@ -178,7 +179,7 @@ void GameInit(Board *board)
                 break;
 
             case 1:  // bord bas
-                ty = BOARD_ROWS - 1;
+                ty = BOARD_ROWS - 1;    // dernière ligne
                 tx = rand() % BOARD_COLS;
                 break;
 
@@ -188,7 +189,7 @@ void GameInit(Board *board)
                 break;
 
             case 3:  // bord droite
-                tx = BOARD_COLS - 1;
+                tx = BOARD_COLS - 1;    // dernière colonne
                 ty = rand() % BOARD_ROWS;
                 break;
         }
@@ -205,7 +206,7 @@ void GameInit(Board *board)
 // IA ennemi basique : se rapproche du joueur en ligne droite
 void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 {
-    int dx = p->x - e->x;   //combien de cases le joueur est à droite ou à gauche de l'ennemi - flèche = pointeur d'adresse
+    int dx = p->x - e->x;   //combien de cases le joueur est à droite ou à gauche de l'ennemi -> flèche = pointeur d'adresse
     int dy = p->y - e->y;   //combien de cases le joueur est est au-dessus ou en-dessous de l'ennemi
 
     int oldX = e->x;   // <-- Sauvegarde de l’ancienne position
@@ -252,8 +253,10 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
         Tile *oldTile = &board->tiles[oldY][oldX];
         for (int i = 0; i < oldTile->layerCount; i++)
         {
-            if (oldTile->layers[i] == e->textureIndex)
-                oldTile->layers[i] = -1;
+            if (oldTile->layers[i] == e->textureIndex)  // vérification si la couche contient l’ennemi
+            {
+                oldTile->layers[i] = -1;    //suppression de l’ennemi de cette couche
+            }
         }
 
         // ajoute la NOUVELLE position
@@ -350,8 +353,7 @@ void GameUpdate(Board *board, float dt)
     }    
 
     // Empêche de sortir du board
-    if (nextX < 0 || nextX >= BOARD_COLS ||
-        nextY < 0 || nextY >= BOARD_ROWS)
+    if (nextX < 0 || nextX >= BOARD_COLS || nextY < 0 || nextY >= BOARD_ROWS)
     {
         return; // on refuse le mouvement
     }   
@@ -471,4 +473,5 @@ void GameDraw(const Board *board)
     {
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
+    
 }
