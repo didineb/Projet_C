@@ -71,9 +71,6 @@ int main(void)
         GameDraw(&board);
         DrawFPS(10, 10);
 
-        double time = GetTime();
-        DrawText(TextFormat("Time : %.2f", time), 170, 10, 20, GREEN);
-
         DrawText(TextFormat("PV : %d", gPlayer.pv), 95, 10, 20, RED);
         DrawText(TextFormat("Victoires : %d", gTrophe.victoire), 295, 10, 20, YELLOW);
 

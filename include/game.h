@@ -7,6 +7,7 @@
 #define BOARD_COLS 34
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
+#define MAX_RECORDS 5
 
 typedef struct
 {

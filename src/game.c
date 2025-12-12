@@ -18,6 +18,9 @@ Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
+float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
+static float startTime = 0; // temps de début du jeu
+float gTimer = 0; // temps écoulé depuis le début du jeu
 
 // ******************************************
 // ******************************************
@@ -93,6 +96,22 @@ int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,0,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,1,0,1},
 };
 
+void UpdateRecords(float currentTime)
+{
+    for (int i = 0; i < MAX_RECORDS; i++)
+    {
+        if (currentTime < scoreBoard[i])    // si le temps actuel est meilleur qu'un des records
+        {
+            // va décaler les scores plus bas
+            for (int j = MAX_RECORDS - 1; j > i; j--)
+            {
+                scoreBoard[j] = scoreBoard[j - 1];
+            }
+            scoreBoard[i] = currentTime; // insère le nouveau record
+            break;
+        }
+    }
+}
 
 void GameInit(Board *board)
 {
@@ -125,6 +144,7 @@ void GameInit(Board *board)
     gEnemy.lastMoveTime = 0;
     gEnemy.moveDelay = 0.3;
 
+    // spawn aléatoire de l'ennemi
     int xrand, yrand;
 
     do {
@@ -178,7 +198,7 @@ void GameInit(Board *board)
                 break;
 
             case 1:  // bord bas
-                ty = BOARD_ROWS - 1;
+                ty = BOARD_ROWS - 1;    // dernière ligne
                 tx = rand() % BOARD_COLS;   // colonne aléatoire de 0 à BOARD_COLS-1
                 break;
 
@@ -188,7 +208,7 @@ void GameInit(Board *board)
                 break;
 
             case 3:  // bord droite
-                tx = BOARD_COLS - 1;
+                tx = BOARD_COLS - 1;    // dernière colonne
                 ty = rand() % BOARD_ROWS;   // ligne aléatoire de 0 à BOARD_ROWS-1
                 break;
         }
@@ -201,13 +221,15 @@ void GameInit(Board *board)
     gTrophe.textureIndex = 5;
     TilePush(&board->tiles[ty][tx], 5);
 
+    startTime = GetTime();
+
 }
 
 
 // IA ennemi basique : se rapproche du joueur en ligne droite
 void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 {
-    int dx = p->x - e->x;   //combien de cases le joueur est à droite ou à gauche de l'ennemi - flèche = pointeur d'adresse
+    int dx = p->x - e->x;   //combien de cases le joueur est à droite ou à gauche de l'ennemi -> flèche = pointeur d'adresse
     int dy = p->y - e->y;   //combien de cases le joueur est est au-dessus ou en-dessous de l'ennemi
 
     int oldX = e->x;   // <-- Sauvegarde de l’ancienne position
@@ -254,8 +276,10 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
         Tile *oldTile = &board->tiles[oldY][oldX];
         for (int i = 0; i < oldTile->layerCount; i++)
         {
-            if (oldTile->layers[i] == e->textureIndex)
-                oldTile->layers[i] = -1;
+            if (oldTile->layers[i] == e->textureIndex)  // vérification si la couche contient l’ennemi
+            {
+                oldTile->layers[i] = -1;    //suppression de l’ennemi de cette couche
+            }
         }
 
         // ajoute la NOUVELLE position
@@ -267,7 +291,8 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 void GameUpdate(Board *board, float dt)
 {
 
-    // boucle musique
+    gTimer = GetTime() - startTime; // met à jour le timer
+    
     if (!IsSoundPlaying(gEnemyMusic)) { // si la musique ne se joue pas
         PlaySound(gEnemyMusic); // Redémarre dès qu’il s’arrête pour faire une boucle
     }
@@ -340,6 +365,7 @@ void GameUpdate(Board *board, float dt)
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
     }
 
+    // Moyen d'augmenter/réduire le rayon de vision pour le débuggage
     if (IsKeyPressed(KEY_F))
     {
         visionRadius += 40;
@@ -349,6 +375,12 @@ void GameUpdate(Board *board, float dt)
     {
         visionRadius -= 40;
     }    
+
+    // Empêche de sortir du board
+    if (nextX < 0 || nextX >= BOARD_COLS || nextY < 0 || nextY >= BOARD_ROWS)
+    {
+        return; // on refuse le mouvement
+    }   
 
     // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
@@ -378,6 +410,7 @@ void GameUpdate(Board *board, float dt)
     {
         gTrophe.victoire += 1;
         PlaySound(gVictoryMusic);
+        UpdateRecords(gTimer); // met à jour le tableau des records
         gPlayer.x = 1;
         gPlayer.y = 1;
         gPlayer.x = 1;
@@ -466,4 +499,12 @@ void GameDraw(const Board *board)
     {
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
+
+    DrawText(TextFormat("Time : %.2f", gTimer), 170, 10, 20, GREEN);
+
+    for (int i = 0; i < MAX_RECORDS; i++)
+    {
+        DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 600, 10 + i * 30, 20, WHITE);
+    }
+
 }
