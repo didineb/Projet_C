@@ -18,6 +18,7 @@ Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
+float moveDelay = 0.15f;
 float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
 static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
@@ -308,7 +309,6 @@ void GameUpdate(Board *board, float dt)
     SetSoundVolume(gEnemyMusic, volume);
 
 
-    float moveDelay = 0.15f; //vitesse
     static float lastMoveTime = 0.0f;
 
     static bool gameOver = false; //var pour delai mort
@@ -324,7 +324,7 @@ void GameUpdate(Board *board, float dt)
             gPlayer.pv = 3;
             gameOver = false;
             visionRadius = 1;
-            float moveDelay = 0.15f;
+            moveDelay = 0.15f;
 
         }
         return;
@@ -420,7 +420,7 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,6))
     {
-        moveDelay-+0.09f;
+        moveDelay *= 0.95f;
         PlaySound(gFlash);
         TilePop(target);
     }
