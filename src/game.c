@@ -424,7 +424,7 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,6))
     {
-        moveDelay-+0.09f;
+        moveDelay *= 0.95f;
         PlaySound(gFlash);
         TilePop(target);
     }
