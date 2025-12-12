@@ -338,6 +338,7 @@ void GameUpdate(Board *board, float dt)
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
     }
 
+    // Moyen d'augmenter/réduire le rayon de vision pour le débuggage
     if (IsKeyPressed(KEY_F))
     {
         visionRadius += 40;
@@ -347,6 +348,13 @@ void GameUpdate(Board *board, float dt)
     {
         visionRadius -= 40;
     }    
+
+    // Empêche de sortir du board
+    if (nextX < 0 || nextX >= BOARD_COLS ||
+        nextY < 0 || nextY >= BOARD_ROWS)
+    {
+        return; // on refuse le mouvement
+    }   
 
     // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
