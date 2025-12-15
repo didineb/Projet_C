@@ -73,7 +73,6 @@ int main(void)
         DrawFPS(10, 10);
 
         DrawText(TextFormat("PV : %d", gPlayer.pv), 95, 10, 20, RED);
-        DrawText(TextFormat("Victoires : %d", gTrophe.victoire), 295, 10, 20, YELLOW);
 
         EndDrawing();
     }

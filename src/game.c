@@ -18,9 +18,11 @@ Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
+float moveDelay = 0.15f;
 float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
 static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
+int nbVictoires = 0; // nombre de victoires
 
 // ******************************************
 // ******************************************
@@ -223,6 +225,8 @@ void GameInit(Board *board)
 
     startTime = GetTime();
 
+    gTrophe.victoire = 0;
+
 }
 
 
@@ -285,6 +289,7 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
         // ajoute la NOUVELLE position
         TilePush(&board->tiles[e->y][e->x], e->textureIndex);
     }
+
 }
 
 
@@ -308,7 +313,6 @@ void GameUpdate(Board *board, float dt)
     SetSoundVolume(gEnemyMusic, volume);
 
 
-    float moveDelay = 0.15f; //vitesse
     static float lastMoveTime = 0.0f;
 
     static bool gameOver = false; //var pour delai mort
@@ -414,14 +418,14 @@ void GameUpdate(Board *board, float dt)
         UpdateRecords(gTimer); // met à jour le tableau des records
         gPlayer.x = 1;
         gPlayer.y = 1;
-        gPlayer.x = 1;
+        nbVictoires += 1;
         Victory = true;
         VictoryTime = GetTime();
         return;
     }
     if (TileContains(target,6))
     {
-        moveDelay-=0.09f;
+        moveDelay *= 0.95f;
         PlaySound(gFlash);
         TilePop(target);
     }
@@ -488,20 +492,20 @@ void GameDraw(const Board *board)
     DrawTexture(gTileTextures[gPlayer.textureIndex], gPlayer.x * TILE_SIZE, gPlayer.y * TILE_SIZE, WHITE);
 
     // Affiche Game Over si nécessaire
-    static bool gameOver = false;
-    if (gPlayer.pv == 0 || gameOver)
+    if (gPlayer.pv <= 0)
     {
         DrawText("GAME OVER", 300, 300, 80, RED);
     }
 
     // Affiche Victoire si nécessaire
-    static bool Victory = false;
-    if (gTrophe.victoire==1 || Victory)
+    if (gTrophe.victoire==1)
     {
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
 
     DrawText(TextFormat("Time : %.2f", gTimer), 170, 10, 20, GREEN);
+    
+    DrawText(TextFormat("Victoires : %d", nbVictoires), 295, 10, 20, YELLOW);
 
     for (int i = 0; i < MAX_RECORDS; i++)
     {
