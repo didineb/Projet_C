@@ -17,6 +17,7 @@ Sound gVictoryMusic; // musique de victoire
 Sound gFlash; // son power up vitesse
 Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
+Sound gPiegeSound; // son piège
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 float moveDelay = 0.15f;
@@ -418,7 +419,7 @@ void GameUpdate(Board *board, float dt)
     // collisions joueur
     Tile *target = &board->tiles[nextY][nextX];
 
-    if (TileContains(target, 1))
+    if (TileContains(target, 1)) // mur
         return;
 
     if (TileContains(target, 3)) // si joueur et ennemi sur la même case -> le joueur perd un PV
@@ -440,7 +441,7 @@ void GameUpdate(Board *board, float dt)
         return;
     }
 
-    if (TileContains(target, 5))
+    if (TileContains(target, 5)) // trophée
     {
         gTrophe.victoire += 1;
         PlaySound(gVictoryMusic);
@@ -452,31 +453,32 @@ void GameUpdate(Board *board, float dt)
         VictoryTime = GetTime();
         return;
     }
-    if (TileContains(target,6))
+    if (TileContains(target,6)) // power up vitesse
     {
         moveDelay *= 0.95f;
         PlaySound(gFlash);
         TilePop(target);
     }
-    if (TileContains(target,7))
+    if (TileContains(target,7)) // power up vision
     {
         visionRadius += 1;
         PlaySound(gVision);
         TilePop(target);
     }
-    if (TileContains(target,8))
+    if (TileContains(target,8)) // power up vie
     {
         gPlayer.pv+=1;
         PlaySound(gHeart);
         TilePop(target);
     }
-    if (TileContains(target,11))
+    if (TileContains(target,11)) // piège pique
     {
         gPlayer.pv-= 1;
+        PlaySound(gPiegeSound);
         TilePop(target);
         gameOver = true;
     }
-    if (TileContains(target,12))
+    if (TileContains(target,12)) // piège portail
     {
         gPlayer.x=1;
         gPlayer.y=1;
@@ -487,7 +489,7 @@ void GameUpdate(Board *board, float dt)
 }
 
 
-void GameDraw(const Board *board)
+void GameDraw(const Board *board) // dessine le board
 {
     for (int y = 0; y < BOARD_ROWS; y++)
     {

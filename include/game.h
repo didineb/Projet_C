@@ -61,7 +61,8 @@ extern Sound gVictoryMusic; // son de victoire
 extern Sound gFlash; // son power up vitesse
 extern Sound gVision; // son power up vision
 extern Sound gHeart; // son power up vie
-extern Piège gPiège; // piège global 
+extern Piège gPiège; // piège global
+extern Sound gPiegeSound; // son piège
 
 
 void GameInit(Board *board); // initialise le board

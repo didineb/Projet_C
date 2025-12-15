@@ -29,8 +29,8 @@ int main(void)
     gTileTextures[8] = LoadTexture("assets/coeur.png");
     gTileTextures[9] = LoadTexture("assets/knight_hurt1.png");
     gTileTextures[10] = LoadTexture("assets/knight_left.png");
-    gTileTextures[11] = LoadTexture("assets/Piège_pique-2.png");
-    gTileTextures[12] = LoadTexture("assets/Piège_portail-2.png");
+    gTileTextures[11] = LoadTexture("assets/Piege_pique-2.png");
+    gTileTextures[12] = LoadTexture("assets/Piege_portail-2.png");
 
     gTileTextureCount = 13;
    
@@ -47,6 +47,7 @@ int main(void)
     gVictoryMusic = LoadSound("assets/Panjabi2m.ogg");
     gFlash = LoadSound("assets/kachow.mp3");
     gHeart = LoadSound("assets/heart.ogg");
+    gPiegeSound = LoadSound("assets/trap_sound.mp3");
 
     gVision = LoadSound("assets/vision.mp3");
     SetSoundVolume(gVision, 0.2f); // son vision trop fort donc
