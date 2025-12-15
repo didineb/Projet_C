@@ -48,6 +48,7 @@ int main(void)
     gFlash = LoadSound("assets/kachow.mp3");
     gHeart = LoadSound("assets/heart.ogg");
     gPiegeSound = LoadSound("assets/trap_sound.mp3");
+    gTpSound = LoadSound("assets/tp_sound.mp3");
 
     gVision = LoadSound("assets/vision.mp3");
     SetSoundVolume(gVision, 0.2f); // son vision trop fort donc

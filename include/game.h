@@ -53,16 +53,17 @@ typedef struct {
 extern Player gPlayer;  // joueur global
 extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
+extern PowerUp gPowerUp; // powerup global
 extern Sound gDeathSound; // son de mort
 extern Sound gHitSound; // son de dommage
 extern Sound gEnemyMusic; // musique sur l'ennemi
-extern PowerUp gPowerUp; // powerup global
 extern Sound gVictoryMusic; // son de victoire
 extern Sound gFlash; // son power up vitesse
 extern Sound gVision; // son power up vision
 extern Sound gHeart; // son power up vie
-extern Piège gPiège; // piège global
 extern Sound gPiegeSound; // son piège
+extern Sound gTpSound; // son tp
+extern Piège gPiège; // piège global
 
 
 void GameInit(Board *board); // initialise le board

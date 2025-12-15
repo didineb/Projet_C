@@ -18,6 +18,7 @@ Sound gFlash; // son power up vitesse
 Sound gVision; // son power up vision
 Sound gHeart; // son power up coeur
 Sound gPiegeSound; // son piège
+Sound gTpSound; // son tp
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 float moveDelay = 0.15f;
@@ -487,10 +488,11 @@ void GameUpdate(Board *board, float dt)
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 
-    if (TileContains(target,12))
+    if (TileContains(target,12)) // piège tp
     {
         gPlayer.x=1;
         gPlayer.y=1;
+        PlaySound(gTpSound);
         TilePop(target);
     }
 }
