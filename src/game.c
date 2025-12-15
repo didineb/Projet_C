@@ -203,12 +203,11 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 2) || // joueur
             TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
             TileContains(&board->tiles[yrand][xrand], 5) || // trophée
-            
             TileContains(&board->tiles[yrand][xrand], 6) || 
             TileContains(&board->tiles[yrand][xrand], 7) ||  
             TileContains(&board->tiles[yrand][xrand], 8) //pour pas mettre le piège là ou ya un power up 
         );
-        gPiège.textureIndex = rand() % 2 + 11;  //random 9 à 10
+        gPiège.textureIndex = rand() % 2 + 11;  //random 11 à 12
         
         TilePush(&board->tiles[yrand][xrand], gPiège.textureIndex); // ajoute le piège
         
@@ -482,14 +481,16 @@ void GameUpdate(Board *board, float dt)
         TilePop(target);
         gameOver = true;
     }
+
+    gPlayer.x = nextX;
+    gPlayer.y = nextY;
+
     if (TileContains(target,12))
     {
         gPlayer.x=1;
         gPlayer.y=1;
         TilePop(target);
     }
-    gPlayer.x = nextX;
-    gPlayer.y = nextY;
 }
 
 
@@ -549,10 +550,13 @@ void GameDraw(const Board *board)
         DrawText("VICTOIRE", 300, 300, 80, YELLOW);
     }
 
+    // Affiche le timer
     DrawText(TextFormat("Time : %.2f", gTimer), 170, 10, 20, GREEN);
     
+    // Affiche le nombre de victoires
     DrawText(TextFormat("Victoires : %d", nbVictoires), 295, 10, 20, YELLOW);
 
+    // Affiche les meilleurs scores
     for (int i = 0; i < MAX_RECORDS; i++)
     {
         DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 950, 10 + i * 30, 20, WHITE);
