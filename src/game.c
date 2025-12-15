@@ -364,7 +364,7 @@ void GameUpdate(Board *board, float dt)
     if (now - lastMoveTime >= moveDelay)
     {
         if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; gPlayer.textureIndex = 2; }
-        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; gPlayer.textureIndex = 2; }
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; gPlayer.textureIndex = 10; }
         else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; gPlayer.textureIndex = 2; }
         else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; gPlayer.textureIndex = 2; }
     }
