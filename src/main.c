@@ -3,8 +3,7 @@
 
 
 // Gestionnaire de texture
-Texture2D gTileTextures[11];
-Texture2D gTileTextures[11];
+Texture2D gTileTextures[13];
 int gTileTextureCount = 0;
 
 
@@ -30,11 +29,11 @@ int main(void)
     gTileTextures[8] = LoadTexture("assets/coeur.png");
     gTileTextures[9] = LoadTexture("assets/knight_hurt1.png");
     gTileTextures[10] = LoadTexture("assets/knight_left.png");
-    gTileTextures[9] = LoadTexture("assets/Piège_pique-2.png");
-    gTileTextures[10] = LoadTexture("assets/Piège_portail-2.png");
+    gTileTextures[11] = LoadTexture("assets/Piège_pique-2.png");
+    gTileTextures[12] = LoadTexture("assets/Piège_portail-2.png");
 
-    gTileTextureCount = 11;
-    gTileTextureCount = 11;
+    gTileTextureCount = 13;
+   
 
     
 

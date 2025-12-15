@@ -76,7 +76,7 @@ float DistancePlayerEnemy() { // fonction qui calcule la distance entre le playe
 
 int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1},
-    {1,0,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
+    {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
     {1,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,1,1,0,1,1,0,1,1,1,0,1,0,0,0,0},
     {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1},
     {0,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,0,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
@@ -208,7 +208,7 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 7) ||  
             TileContains(&board->tiles[yrand][xrand], 8) //pour pas mettre le piège là ou ya un power up 
         );
-        gPiège.textureIndex = rand() % 2 + 8;  //random 9 à 10
+        gPiège.textureIndex = rand() % 2 + 11;  //random 9 à 10
         
         TilePush(&board->tiles[yrand][xrand], gPiège.textureIndex); // ajoute le piège
         
@@ -470,12 +470,13 @@ void GameUpdate(Board *board, float dt)
         PlaySound(gHeart);
         TilePop(target);
     }
-    if (TileContains(target,9))
+    if (TileContains(target,11))
     {
         gPlayer.pv-= 1;
         TilePop(target);
+        gameOver = true;
     }
-    if (TileContains(target 10))
+    if (TileContains(target,12))
     {
         gPlayer.x=1;
         gPlayer.y=1;
