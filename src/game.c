@@ -9,6 +9,7 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
+Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
@@ -139,12 +140,17 @@ void GameInit(Board *board)
 
     gPlayer.x = 1; // départ en (1,1)
     gPlayer.y = 1;
-    gPlayer.pv = 3;
+    gPlayer.pv = 1;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
     gEnemy.textureIndex = 3;
     gEnemy.lastMoveTime = 0;
     gEnemy.moveDelay = 0.3;
+
+    gPiège.x = 3;
+    gPiège.y= 3;
+    gPiège.textureIndex= 7; 
+
 
     // spawn aléatoire de l'ennemi
     int xrand, yrand;
@@ -185,7 +191,30 @@ void GameInit(Board *board)
         TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
         
     }
-    
+
+
+    for (int i = 0; i < 6; i++)
+    {
+        do {
+            xrand = rand() % BOARD_COLS; // colonne aléatoire
+            yrand = rand() % BOARD_ROWS; // ligne aléatoire
+        } while (
+            TileContains(&board->tiles[yrand][xrand], 1) || // mur
+            TileContains(&board->tiles[yrand][xrand], 2) || // joueur
+            TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
+            TileContains(&board->tiles[yrand][xrand], 5) || // trophée
+            
+            TileContains(&board->tiles[yrand][xrand], 6) || 
+            TileContains(&board->tiles[yrand][xrand], 7) ||  
+            TileContains(&board->tiles[yrand][xrand], 8) //pour pas mettre le piège là ou ya un power up 
+        );
+        gPiège.textureIndex = rand() % 2 + 11;  //random 9 à 10
+        
+        TilePush(&board->tiles[yrand][xrand], gPiège.textureIndex); // ajoute le piège
+        
+    }
+
+
     // Spawn trophée dans les bordures uniquement sur les cases = 0
     int tx, ty;
 
@@ -330,7 +359,7 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f)
         {
             GameInit(board);
-            gPlayer.pv = 3;
+            gPlayer.pv = 1;
             gameOver = false;
             visionRadius = 1;
             moveDelay = 0.15f;
@@ -369,10 +398,10 @@ void GameUpdate(Board *board, float dt)
 
     if (now - lastMoveTime >= moveDelay)
     {
-        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; gPlayer.textureIndex = 2; }
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; gPlayer.textureIndex = 10; }
+        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; gPlayer.textureIndex = 2; }
+        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; gPlayer.textureIndex = 2; }
     }
 
     // Moyen d'augmenter/réduire le rayon de vision pour le débuggage
@@ -402,11 +431,12 @@ void GameUpdate(Board *board, float dt)
     {
         if (GetTime() - HitTime >= 2.5f) //delai pour un cooldown sur la perte de PV
         {
-            
             gPlayer.pv--;
             PlaySound(gHitSound);
             HitTime = GetTime();
+            gPlayer.textureIndex = 9;
         }
+
         if (gPlayer.pv <= 0)
         {
             PlaySound(gDeathSound);
@@ -436,7 +466,7 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,7))
     {
-        visionRadius += 2;
+        visionRadius += 1;
         PlaySound(gVision);
         TilePop(target);
     }
@@ -446,7 +476,18 @@ void GameUpdate(Board *board, float dt)
         PlaySound(gHeart);
         TilePop(target);
     }
-    
+    if (TileContains(target,11))
+    {
+        gPlayer.pv-= 1;
+        TilePop(target);
+        gameOver = true;
+    }
+    if (TileContains(target,12))
+    {
+        gPlayer.x=1;
+        gPlayer.y=1;
+        TilePop(target);
+    }
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 }
@@ -516,5 +557,7 @@ void GameDraw(const Board *board)
     {
         DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 950, 10 + i * 30, 20, WHITE);
     }
+    
+
 
 }
