@@ -326,6 +326,7 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 
 }
 
+static bool gameOver = false; //var pour delai mort
 
 void GameUpdate(Board *board, float dt)
 {
@@ -349,7 +350,7 @@ void GameUpdate(Board *board, float dt)
 
     static float lastMoveTime = 0.0f;
 
-    static bool gameOver = false; //var pour delai mort
+    
     static float gameOverTime = 0.0f;
 
     static float HitTime = 0.0f;
@@ -481,7 +482,6 @@ void GameUpdate(Board *board, float dt)
         gPlayer.pv-= 1;
         PlaySound(gPiegeSound);
         TilePop(target);
-        gameOver = true;
     }
 
     gPlayer.x = nextX;
@@ -544,6 +544,7 @@ void GameDraw(const Board *board) // dessine le board
     if (gPlayer.pv <= 0)
     {
         DrawText("GAME OVER", 300, 300, 80, RED);
+        gameOver = true;
     }
 
     // Affiche Victoire si nécessaire
