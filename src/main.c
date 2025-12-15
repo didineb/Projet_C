@@ -4,6 +4,7 @@
 
 // Gestionnaire de texture
 Texture2D gTileTextures[11];
+Texture2D gTileTextures[11];
 int gTileTextureCount = 0;
 
 
@@ -27,9 +28,12 @@ int main(void)
     gTileTextures[6] = LoadTexture("assets/hermes.png");
     gTileTextures[7] = LoadTexture("assets/lunettes.png");
     gTileTextures[8] = LoadTexture("assets/coeur.png");
+    gTileTextures[9] = LoadTexture("assets/knight_hurt1.png");
+    gTileTextures[10] = LoadTexture("assets/knight_left.png");
     gTileTextures[9] = LoadTexture("assets/Piège_pique-2.png");
     gTileTextures[10] = LoadTexture("assets/Piège_portail-2.png");
 
+    gTileTextureCount = 11;
     gTileTextureCount = 11;
 
     
@@ -40,7 +44,7 @@ int main(void)
 
     Music music = LoadMusicStream("assets/Panjabi.ogg");
     gDeathSound = LoadSound("assets/gameover.mp3");
-    gHitSound = LoadSound("assets/hit_sound.ogg");
+    gHitSound = LoadSound("assets/hurt_sound.mp3");
     gVictoryMusic = LoadSound("assets/Panjabi2m.ogg");
     gFlash = LoadSound("assets/kachow.mp3");
     gHeart = LoadSound("assets/heart.ogg");
@@ -50,7 +54,7 @@ int main(void)
     
     //---Gestion du son pour l'ennemi---//
     gEnemyMusic = LoadSound("assets/thecroods.mp3");
-    SetSoundVolume(gEnemyMusic, 2.0f);
+    SetSoundVolume(gEnemyMusic, 0.3f);
     PlaySound(gEnemyMusic);
     //-------//
 

@@ -140,7 +140,7 @@ void GameInit(Board *board)
 
     gPlayer.x = 1; // départ en (1,1)
     gPlayer.y = 1;
-    gPlayer.pv = 3;
+    gPlayer.pv = 1;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
     gEnemy.textureIndex = 3;
@@ -354,7 +354,7 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f)
         {
             GameInit(board);
-            gPlayer.pv = 3;
+            gPlayer.pv = 1;
             gameOver = false;
             visionRadius = 1;
             moveDelay = 0.15f;
@@ -392,10 +392,10 @@ void GameUpdate(Board *board, float dt)
 
     if (now - lastMoveTime >= moveDelay)
     {
-        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; }
-        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; }
+        if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) { nextX++; lastMoveTime = now; gPlayer.textureIndex = 2; }
+        else if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) { nextX--; lastMoveTime = now; gPlayer.textureIndex = 10; }
+        else if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) { nextY--; lastMoveTime = now; gPlayer.textureIndex = 2; }
+        else if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) { nextY++; lastMoveTime = now; gPlayer.textureIndex = 2; }
     }
 
     // Moyen d'augmenter/réduire le rayon de vision pour le débuggage
@@ -425,11 +425,12 @@ void GameUpdate(Board *board, float dt)
     {
         if (GetTime() - HitTime >= 2.5f) //delai pour un cooldown sur la perte de PV
         {
-            
             gPlayer.pv--;
             PlaySound(gHitSound);
             HitTime = GetTime();
+            gPlayer.textureIndex = 9;
         }
+
         if (gPlayer.pv <= 0)
         {
             PlaySound(gDeathSound);
@@ -459,7 +460,7 @@ void GameUpdate(Board *board, float dt)
     }
     if (TileContains(target,7))
     {
-        visionRadius += 2;
+        visionRadius += 1;
         PlaySound(gVision);
         TilePop(target);
     }
