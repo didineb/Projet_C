@@ -19,7 +19,7 @@ Sound gHeart; // son power up coeur
 PowerUp gPowerUp; // powerup global
 int visionRadius = 1; // rayon de vision du joueur
 float moveDelay = 0.15f;
-float scoreBoard[MAX_RECORDS] = { 9999, 9999, 9999, 9999, 9999 }; // tableau des 5 meilleurs scores
+float scoreBoard[MAX_RECORDS] = {9999, 9999, 9999, 9999, 9999}; // tableau des 5 meilleurs scores
 static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
 int nbVictoires = 0; // nombre de victoires
@@ -276,17 +276,22 @@ void UpdateEnemy(Board *board, Enemy *e, const Player *p)
 
     if (moved)  // si l’ennemi a bougé, on met à jour le board en effaçant l’ancienne tuile ennemi et en ajoutant la nouvelle position
     {
-        // efface L’ANCIEN emplacement
+        // efface l'ancien emplacement (méthode de réécriture pour enlever un élément)
         Tile *oldTile = &board->tiles[oldY][oldX];
+        int new_layer_count = 0;
         for (int i = 0; i < oldTile->layerCount; i++)
         {
-            if (oldTile->layers[i] == e->textureIndex)  // vérification si la couche contient l’ennemi
+            if (oldTile->layers[i] != e->textureIndex) // On ne copie que ce qui n'est PAS l'ennemi
             {
-                oldTile->layers[i] = -1;    //suppression de l’ennemi de cette couche
+                oldTile->layers[new_layer_count++] = oldTile->layers[i];    // réécrit la couche à la nouvelle position
             }
         }
 
-        // ajoute la NOUVELLE position
+        // mise à jour du nombre de couches = nouvelles couches après suppression de l'ennemi
+        // comme dire "j'ai 3 couches, j'en ai enlevé une, j'en ai plus que 2 maintenant"
+        oldTile->layerCount = new_layer_count; 
+
+        // ajoute la nouvelle position
         TilePush(&board->tiles[e->y][e->x], e->textureIndex);
     }
 
@@ -329,6 +334,7 @@ void GameUpdate(Board *board, float dt)
             gameOver = false;
             visionRadius = 1;
             moveDelay = 0.15f;
+            nbVictoires = 0;
 
         }
         return;
@@ -508,7 +514,7 @@ void GameDraw(const Board *board)
 
     for (int i = 0; i < MAX_RECORDS; i++)
     {
-        DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 600, 10 + i * 30, 20, WHITE);
+        DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 950, 10 + i * 30, 20, WHITE);
     }
 
 }
