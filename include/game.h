@@ -45,6 +45,11 @@ typedef struct {
     int textureIndex;
 } PowerUp;
 
+ typedef struct {
+    int x,y;
+    int textureIndex;
+ } Piège;
+
 extern Player gPlayer;  // joueur global
 extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
@@ -56,6 +61,7 @@ extern Sound gVictoryMusic; // son de victoire
 extern Sound gFlash; // son power up vitesse
 extern Sound gVision; // son power up vision
 extern Sound gHeart; // son power up vie
+extern Piège gPiège; // piège global 
 
 
 void GameInit(Board *board); // initialise le board

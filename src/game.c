@@ -9,6 +9,7 @@ extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemy; // appel de l'ennemi global
 Trophe gTrophe;
+Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
 Sound gHitSound; // son de dommage
 Sound gEnemyMusic; // son sur l'ennemi
@@ -75,7 +76,7 @@ float DistancePlayerEnemy() { // fonction qui calcule la distance entre le playe
 
 int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1},
-    {1,0,0,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
+    {1,0,1,0,1,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,0,1,0,0,0,1,0,1},
     {1,0,1,0,1,0,1,1,0,1,1,0,1,1,0,1,0,1,0,1,1,0,1,1,0,1,1,1,0,1,0,0,0,0},
     {1,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,0,1,0,1,0,0,0,0,0,0,0,0,0,1,0,1,1,1},
     {0,0,1,1,1,1,0,1,1,1,1,0,1,0,1,1,0,0,0,1,0,0,1,1,1,1,0,1,0,1,0,1,0,1},
@@ -146,6 +147,11 @@ void GameInit(Board *board)
     gEnemy.lastMoveTime = 0;
     gEnemy.moveDelay = 0.3;
 
+    gPiège.x = 3;
+    gPiège.y= 3;
+    gPiège.textureIndex= 7; 
+
+
     // spawn aléatoire de l'ennemi
     int xrand, yrand;
 
@@ -185,7 +191,30 @@ void GameInit(Board *board)
         TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
         
     }
-    
+
+
+    for (int i = 0; i < 6; i++)
+    {
+        do {
+            xrand = rand() % BOARD_COLS; // colonne aléatoire
+            yrand = rand() % BOARD_ROWS; // ligne aléatoire
+        } while (
+            TileContains(&board->tiles[yrand][xrand], 1) || // mur
+            TileContains(&board->tiles[yrand][xrand], 2) || // joueur
+            TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
+            TileContains(&board->tiles[yrand][xrand], 5) || // trophée
+            
+            TileContains(&board->tiles[yrand][xrand], 6) || 
+            TileContains(&board->tiles[yrand][xrand], 7) ||  
+            TileContains(&board->tiles[yrand][xrand], 8) //pour pas mettre le piège là ou ya un power up 
+        );
+        gPiège.textureIndex = rand() % 2 + 8;  //random 9 à 10
+        
+        TilePush(&board->tiles[yrand][xrand], gPiège.textureIndex); // ajoute le piège
+        
+    }
+
+
     // Spawn trophée dans les bordures uniquement sur les cases = 0
     int tx, ty;
 
@@ -440,7 +469,17 @@ void GameUpdate(Board *board, float dt)
         PlaySound(gHeart);
         TilePop(target);
     }
-    
+    if (TileContains(target,9))
+    {
+        gPlayer.pv-= 1;
+        TilePop(target);
+    }
+    if (TileContains(target 10))
+    {
+        gPlayer.x=1;
+        gPlayer.y=1;
+        TilePop(target);
+    }
     gPlayer.x = nextX;
     gPlayer.y = nextY;
 }
@@ -510,5 +549,7 @@ void GameDraw(const Board *board)
     {
         DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 600, 10 + i * 30, 20, WHITE);
     }
+    
+
 
 }
