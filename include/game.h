@@ -8,7 +8,9 @@
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
 #define MAX_RECORDS 5
-#define MAX_ENEMIES 2
+// #define MAX_ENEMIES 3
+#define ENEMY_BASE_DELAY 0.4f
+#define ENEMY_MIN_DELAY  0.1f
 
 typedef struct
 {
@@ -64,7 +66,6 @@ extern Sound gHeart; // son power up vie
 extern Sound gPiegeSound; // son piège
 extern Sound gTpSound; // son tp
 extern Piège gPiège; // piège global
-
 
 void GameInit(Board *board); // initialise le board
 void GameUpdate(Board *board, float dt); // mise à jour du jeu

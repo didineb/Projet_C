@@ -7,7 +7,7 @@
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
-Enemy gEnemies[MAX_ENEMIES]; // tableau des ennemis
+Enemy gEnemies[5]; // tableau des ennemis
 Trophe gTrophe;
 Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
@@ -27,6 +27,7 @@ static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
 int nbVictoires = 0; // nombre de victoires
 int nbDeath = 0; // nombre de morts
+int MAX_ENEMIES = 2; // nombre max d'ennemis, modifiable en fonction des victoires
 
 // ******************************************
 // ******************************************
@@ -86,6 +87,8 @@ float DistancePlayerEnemy()
 
 // ******************************************
 // Gestion du board et des entrées
+
+
 
 int maze[BOARD_ROWS][BOARD_COLS] = {
     {1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1,1,1,0,1},
@@ -511,13 +514,15 @@ void GameUpdate(Board *board, float dt)
         TilePop(target);
     }
 
-    // l'ennemi va plus vite après 3 victoires
-    if (nbVictoires >= 3)
+    // ajuste la vitesse des ennemis en fonction du nombre de victoires
+    float delay = ENEMY_BASE_DELAY / (1.0f + nbVictoires * 0.3f); //pas de courbe linéaire
+
+    if (delay < ENEMY_MIN_DELAY)    // limite la vitesse max à en dessous de 0.1f
+        delay = ENEMY_MIN_DELAY;    // ça ne peut pas aller plus vite que ça
+
+    for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        for (int i = 0; i < MAX_ENEMIES; i++) 
-        {
-            gEnemies[i].moveDelay = 0.2f;  // vitesses différentes
-        }
+        gEnemies[i].moveDelay = delay;
     }
     
 }
