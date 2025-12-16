@@ -155,15 +155,10 @@ void GameInit(Board *board)
     gPlayer.pv = 1;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    // gEnemy.textureIndex = 3;
-    // gEnemy.lastMoveTime = 0;
-    //gEnemy.moveDelay = 0.3;
-
-
     // spawn aléatoire de l'ennemi
     int xrand, yrand;
 
-    for (int i = 0; i < MAX_ENEMIES; i++)
+    for (int i = 0; i < MAX_ENEMIES; i++)   // boucle for qui va boucler sur un tableau d'ennemi
     {
         gEnemies[i].textureIndex = 3;
         gEnemies[i].lastMoveTime = 0;
@@ -196,14 +191,13 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
             TileContains(&board->tiles[yrand][xrand], 5)    // trophée
         );
-        int texture_power = rand() % 3 + 6;  //random 6-8
-        gPowerUp.textureIndex = texture_power; // power-up
+        gPowerUp.textureIndex = rand() % 3 + 6;  //random 6-8
         
-        TilePush(&board->tiles[yrand][xrand], texture_power); // ajoute le power-up
+        TilePush(&board->tiles[yrand][xrand], gPowerUp.textureIndex); // ajoute le power-up
         
     }
 
-
+    // spawn aléatoire de pièges
     for (int i = 0; i < 6; i++)
     {
         do {
@@ -263,7 +257,7 @@ void GameInit(Board *board)
     gTrophe.textureIndex = 5;
     TilePush(&board->tiles[ty][tx], 5);
 
-    startTime = GetTime();
+    startTime = GetTime();  // initialise le temps de début du jeu
 
     gTrophe.victoire = 0;
 
@@ -358,9 +352,7 @@ void GameUpdate(Board *board, float dt)
 
     SetSoundVolume(gEnemyMusic, volume);
 
-
     static float lastMoveTime = 0.0f;
-
     
     static float gameOverTime = 0.0f;
 
@@ -400,10 +392,10 @@ void GameUpdate(Board *board, float dt)
     // déplacement de l'ennemi
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        if (now - gEnemies[i].lastMoveTime >= gEnemies[i].moveDelay)
+        if (now - gEnemies[i].lastMoveTime >= gEnemies[i].moveDelay)    // si le délai de mouvement est écoulé
         {
-            UpdateEnemy(board, &gEnemies[i], &gPlayer);
-            gEnemies[i].lastMoveTime = now;
+            UpdateEnemy(board, &gEnemies[i], &gPlayer); // met à jour la position de l'ennemi
+            gEnemies[i].lastMoveTime = now; // met à jour le temps du dernier mouvement
         }
     }
 
