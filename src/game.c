@@ -8,6 +8,7 @@ extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
 Enemy gEnemies[MAX_ENEMIES]; // tableau des ennemis
+Enemy gEnemy; // ennemi global
 Trophe gTrophe;
 Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
@@ -510,6 +511,7 @@ void GameUpdate(Board *board, float dt)
         PlaySound(gTpSound);
         TilePop(target);
     }
+
 }
 
 
