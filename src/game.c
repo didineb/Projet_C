@@ -26,6 +26,7 @@ float scoreBoard[MAX_RECORDS] = {9999, 9999, 9999, 9999, 9999}; // tableau des 5
 static float startTime = 0; // temps de début du jeu
 float gTimer = 0; // temps écoulé depuis le début du jeu
 int nbVictoires = 0; // nombre de victoires
+int nbDeath = 0; // nombre de morts
 
 // ******************************************
 // ******************************************
@@ -368,7 +369,7 @@ void GameUpdate(Board *board, float dt)
             visionRadius = 1;
             moveDelay = 0.15f;
             nbVictoires = 0;
-
+            nbDeath += 1;
         }
         return;
     }
@@ -489,6 +490,14 @@ void GameUpdate(Board *board, float dt)
         gPlayer.pv-= 1;
         PlaySound(gPiegeSound);
         TilePop(target);
+
+        if (gPlayer.pv <= 0)
+        {
+            PlaySound(gDeathSound);
+            gameOver = true;
+            gameOverTime = GetTime(); // démarre le délai
+            return;
+        }
     }
 
     gPlayer.x = nextX;
@@ -572,5 +581,7 @@ void GameDraw(const Board *board) // dessine le board
     {
         DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 950, 10 + i * 30, 20, WHITE);
     }
+
+    DrawText(TextFormat("Morts : %d", nbDeath), 440, 10, 20, RED);
 
 }
