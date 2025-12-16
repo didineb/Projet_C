@@ -52,7 +52,6 @@ typedef struct {
  } Piège;
 
 extern Player gPlayer;  // joueur global
-extern Enemy gEnemy;    // ennemi global
 extern Trophe gTrophe;
 extern PowerUp gPowerUp; // powerup global
 extern Sound gDeathSound; // son de mort

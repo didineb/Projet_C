@@ -163,7 +163,7 @@ void GameInit(Board *board)
     {
         gEnemies[i].textureIndex = 3;
         gEnemies[i].lastMoveTime = 0;
-        gEnemies[i].moveDelay = 0.3;
+        gEnemies[i].moveDelay = 0.3f;
 
         do {
             xrand = rand() % BOARD_COLS;
@@ -510,6 +510,16 @@ void GameUpdate(Board *board, float dt)
         PlaySound(gTpSound);
         TilePop(target);
     }
+
+    // l'ennemi va plus vite après 3 victoires
+    if (nbVictoires >= 3)
+    {
+        for (int i = 0; i < MAX_ENEMIES; i++) 
+        {
+            gEnemies[i].moveDelay = 0.2f;  // vitesses différentes
+        }
+    }
+    
 }
 
 
