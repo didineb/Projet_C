@@ -152,7 +152,7 @@ void GameInit(Board *board)
 
     gPlayer.x = 1; // départ en (1,1)
     gPlayer.y = 1;
-    gPlayer.pv = 1;
+    gPlayer.pv = 3;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
     // spawn aléatoire de l'ennemi
@@ -363,7 +363,7 @@ void GameUpdate(Board *board, float dt)
         if (GetTime() - gameOverTime >= 2.5f)
         {
             GameInit(board);
-            gPlayer.pv = 1;
+            gPlayer.pv = 3;
             gameOver = false;
             visionRadius = 1;
             moveDelay = 0.15f;

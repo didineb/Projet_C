@@ -29,7 +29,7 @@ int main(void)
     gTileTextures[8] = LoadTexture("assets/coeur.png");
     gTileTextures[9] = LoadTexture("assets/knight_hurt1.png");
     gTileTextures[10] = LoadTexture("assets/knight_left.png");
-    gTileTextures[11] = LoadTexture("assets/Piege_pique-2.png");
+    gTileTextures[11] = LoadTexture("assets/trap_v4.png");
     gTileTextures[12] = LoadTexture("assets/Piege_portail-2.png");
 
     gTileTextureCount = 13;
