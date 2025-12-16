@@ -8,6 +8,7 @@
 #define BOARD_ROWS 22
 #define MAX_LAYERS 6
 #define MAX_RECORDS 5
+#define MAX_ENEMIES 2
 
 typedef struct
 {

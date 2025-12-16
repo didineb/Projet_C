@@ -7,7 +7,7 @@
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
-Enemy gEnemy; // appel de l'ennemi global
+Enemy gEnemies[MAX_ENEMIES]; // tableau des ennemis
 Trophe gTrophe;
 Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
@@ -66,10 +66,20 @@ static int TilePop(Tile *t)
     return tex;
 }
 
-float DistancePlayerEnemy() { // fonction qui calcule la distance entre le player et l'ennemi
-    float dx = (float)gPlayer.x - (float)gEnemy.x;
-    float dy = (float)gPlayer.y - (float)gEnemy.y;
-    return sqrtf(dx*dx + dy*dy);
+float DistancePlayerEnemy()
+{
+    float minDist = 9999.0f;    // très grande valeur initiale pour être sûr que la première distance calculée sera plus petite 
+
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        float dx = (float)gPlayer.x - (float)gEnemies[i].x; // différence de position en X
+        float dy = (float)gPlayer.y - (float)gEnemies[i].y; // différence de position en Y
+        float dist = sqrtf(dx * dx + dy * dy);  
+
+        if (dist < minDist) // si cette distance est la plus petite rencontrée jusqu'à présent
+            minDist = dist; // on la garde comme nouvelle distance minimale
+    }
+    return minDist;
 }
 
 
@@ -145,34 +155,34 @@ void GameInit(Board *board)
     gPlayer.pv = 1;
     gPlayer.textureIndex = 2; // correspond à la texture knight
 
-    gEnemy.textureIndex = 3;
-    gEnemy.lastMoveTime = 0;
-    gEnemy.moveDelay = 0.3;
-
-    gPiège.x = 3;
-    gPiège.y= 3;
-    gPiège.textureIndex= 7; 
+    // gEnemy.textureIndex = 3;
+    // gEnemy.lastMoveTime = 0;
+    //gEnemy.moveDelay = 0.3;
 
 
     // spawn aléatoire de l'ennemi
     int xrand, yrand;
 
-    do {
-        xrand = rand() % BOARD_COLS; // colonne aléatoire
-        yrand = rand() % BOARD_ROWS; // ligne aléatoire
-    } while (
-        TileContains(&board->tiles[yrand][xrand], 1) || // mur
-        TileContains(&board->tiles[yrand][xrand], 2) || // joueur
-        TileContains(&board->tiles[yrand][xrand], 6) || // power-up
-        TileContains(&board->tiles[yrand][xrand], 7) || // power-up
-        TileContains(&board->tiles[yrand][xrand], 8) || // power-up
-        TileContains(&board->tiles[yrand][xrand], 5) || // trophée
-        xrand == 1 && yrand == 1                        // position de départ du joueur
-    );
-    
-    gEnemy.x = xrand;
-    gEnemy.y = yrand;
-    TilePush(&board->tiles[gEnemy.y][gEnemy.x], 3); // place l'ennemi sur le board
+    for (int i = 0; i < MAX_ENEMIES; i++)
+    {
+        gEnemies[i].textureIndex = 3;
+        gEnemies[i].lastMoveTime = 0;
+        gEnemies[i].moveDelay = 0.3;
+
+        do {
+            xrand = rand() % BOARD_COLS;
+            yrand = rand() % BOARD_ROWS;
+        } while (
+            TileContains(&board->tiles[yrand][xrand], 1) || // évite mur
+            TileContains(&board->tiles[yrand][xrand], 2) || // évite joueur
+            TileContains(&board->tiles[yrand][xrand], 3)    // évite ennemi
+        );
+
+        gEnemies[i].x = xrand;
+        gEnemies[i].y = yrand;
+        TilePush(&board->tiles[yrand][xrand], 3);
+    }
+
 
     //spawn aléatoire de power-ups  
     for (int i = 0; i < 6; i++)
@@ -184,8 +194,7 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 1) || // mur
             TileContains(&board->tiles[yrand][xrand], 2) || // joueur
             TileContains(&board->tiles[yrand][xrand], 3) || // ennemi
-            TileContains(&board->tiles[yrand][xrand], 5) || // trophée
-            xrand == 1 && yrand == 1                        // position de départ du joueur
+            TileContains(&board->tiles[yrand][xrand], 5)    // trophée
         );
         int texture_power = rand() % 3 + 6;  //random 6-8
         gPowerUp.textureIndex = texture_power; // power-up
@@ -207,8 +216,9 @@ void GameInit(Board *board)
             TileContains(&board->tiles[yrand][xrand], 5) || // trophée
             TileContains(&board->tiles[yrand][xrand], 6) || 
             TileContains(&board->tiles[yrand][xrand], 7) ||  
-            TileContains(&board->tiles[yrand][xrand], 8) //pour pas mettre le piège là ou ya un power up 
+            TileContains(&board->tiles[yrand][xrand], 8)    //pour pas mettre le piège là ou ya un power up 
         );
+
         gPiège.textureIndex = rand() % 2 + 11;  //random 11 à 12
         
         TilePush(&board->tiles[yrand][xrand], gPiège.textureIndex); // ajoute le piège
@@ -388,11 +398,15 @@ void GameUpdate(Board *board, float dt)
     double now = GetTime();
 
     // déplacement de l'ennemi
-    if (now - gEnemy.lastMoveTime >= gEnemy.moveDelay)
+    for (int i = 0; i < MAX_ENEMIES; i++)
     {
-        UpdateEnemy(board, &gEnemy, &gPlayer);
-        gEnemy.lastMoveTime = now;
+        if (now - gEnemies[i].lastMoveTime >= gEnemies[i].moveDelay)
+        {
+            UpdateEnemy(board, &gEnemies[i], &gPlayer);
+            gEnemies[i].lastMoveTime = now;
+        }
     }
+
 
     // déplacement du joueur
     int nextX = gPlayer.x;
@@ -566,7 +580,5 @@ void GameDraw(const Board *board) // dessine le board
     {
         DrawText(TextFormat("%d. %.2f s", i + 1, scoreBoard[i]), 950, 10 + i * 30, 20, WHITE);
     }
-    
-
 
 }
