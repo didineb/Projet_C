@@ -7,7 +7,7 @@
 extern Texture2D gTileTextures[];
 extern int gTileTextureCount;
 Player gPlayer; // appel du joueur global
-Enemy gEnemies[5]; // tableau des ennemis
+Enemy gEnemies[5]; // tableau d'ennemis avec taille max 5
 Trophe gTrophe;
 Piège gPiège; //appel piège
 Sound gDeathSound; // son de mort
@@ -468,6 +468,16 @@ void GameUpdate(Board *board, float dt)
         nbVictoires += 1;
         Victory = true;
         VictoryTime = GetTime();
+
+        // si le nombre de victoires est un multiple de 3, augmenter de +1 le nombre d'ennemis
+        if (nbVictoires % 3 == 0)
+        {
+            if (MAX_ENEMIES <= 6)
+            {
+                MAX_ENEMIES += 1; // augmente le nombre max d'ennemis à chaque victoire
+            }
+        }
+        
         return;
     }
     if (TileContains(target,6)) // power up vitesse
@@ -517,14 +527,14 @@ void GameUpdate(Board *board, float dt)
     // ajuste la vitesse des ennemis en fonction du nombre de victoires
     float delay = ENEMY_BASE_DELAY / (1.0f + nbVictoires * 0.3f); //pas de courbe linéaire
 
-    if (delay < ENEMY_MIN_DELAY)    // limite la vitesse max à en dessous de 0.1f
+    if (delay < ENEMY_MIN_DELAY)
+    {    // limite la vitesse max à en dessous de 0.1f
         delay = ENEMY_MIN_DELAY;    // ça ne peut pas aller plus vite que ça
-
+    }
     for (int i = 0; i < MAX_ENEMIES; i++)
     {
         gEnemies[i].moveDelay = delay;
-    }
-    
+    }    
 }
 
 
